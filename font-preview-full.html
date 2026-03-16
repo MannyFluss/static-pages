@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Font Preview — Full Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Datatype&family=Bebas+Neue&family=Rowdies:wght@300;400;700&family=Libre+Barcode+39&family=Turret+Road:wght@400;700&family=Digital+Numbers&family=Rubik+80s+Fade&family=Rubik+Broken+Fax&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --main:    #4394B1;
+    --sec:     #F63C80;
+    --dark:    #561474;
+    --bg:      #080810;
+    --bg2:     #0e0e1a;
+    --bg3:     #141424;
+    --border:  rgba(67,148,177,0.18);
+    --muted:   rgba(255,255,255,0.28);
+    --white:   #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Datatype', monospace;
+    padding: 0 0 80px;
+  }
+
+  /* ── HERO HEADER ── */
+  .site-header {
+    padding: 60px 60px 48px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .site-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .site-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    line-height: 0.9;
+    letter-spacing: 0.03em;
+    color: var(--white);
+  }
+  .site-title span { color: var(--main); }
+  .site-meta {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* ── PALETTE ROW ── */
+  .palette-row {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .swatch-block {
+    width: 120px;
+    height: 48px;
+    border-radius: 2px;
+  }
+  .swatch-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .swatch-hex {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--white);
+  }
+  .palette-combos {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    align-items: center;
+  }
+  .combo-pill {
+    height: 48px;
+    padding: 0 20px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  /* ── NAV INDEX ── */
+  .font-index {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .font-index-item {
+    padding: 14px 24px;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color 0.2s, background 0.2s;
+  }
+  .font-index-item:hover { color: var(--main); background: rgba(67,148,177,0.05); }
+  .font-index-item span { color: var(--sec); margin-right: 6px; }
+
+  /* ── FONT SECTION ── */
+  .font-section {
+    border-bottom: 1px solid var(--border);
+    padding: 56px 60px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .font-section:nth-child(even) { background: var(--bg2); }
+
+  /* sidebar */
+  .font-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 20px;
+  }
+  .font-number {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--sec);
+  }
+  .font-name-label {
+    font-size: 13px;
+    font-family: 'Datatype', monospace;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    line-height: 1.6;
+  }
+  .font-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .tag {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 1px;
+  }
+  .color-dots {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .cdot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+
+  /* main content */
+  .font-main { display: flex; flex-direction: column; gap: 32px; }
+
+  .font-hero-text {
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+  .font-specimen-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .specimen-line {
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* color sample blocks */
+  .color-samples {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .color-card {
+    padding: 20px 20px 16px;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .color-card-text {
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+  .color-card-label {
+    font-family: 'Datatype', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  /* symbol strip */
+  .symbol-strip {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .symbol-strip-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .symbol-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    align-items: baseline;
+  }
+  .sym {
+    color: var(--main);
+    line-height: 1;
+  }
+  .sym-pair { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .sym-code { font-size: 8px; letter-spacing: 0.06em; color: rgba(255,255,255,0.25); font-family: monospace; }
+
+  /* alphabet */
+  .alphabet-block {
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    word-break: break-all;
+    line-height: 1.7;
+  }
+
+  /* barcode special */
+  .barcode-demo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .barcode-line {
+    letter-spacing: 0.1em;
+    color: var(--main);
+    line-height: 1;
+    word-break: break-all;
+  }
+
+  /* divider label */
+  .divider-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .divider-label::before, .divider-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="site-header">
+  <div class="site-header-top">
+    <div class="site-title">FONT<br><span>LIBRARY</span></div>
+    <div class="site-meta">
+      9 typefaces selected<br>
+      3 brand colors<br>
+      Google Fonts · OFL<br>
+      Preview document
+    </div>
+  </div>
+
+  <!-- Palette -->
+  <div class="palette-row">
+    <div class="swatch">
+      <div class="swatch-block" style="background:#4394B1;"></div>
+      <div class="swatch-label">Main</div>
+      <div class="swatch-hex">#4394B1</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#F63C80;"></div>
+      <div class="swatch-label">Secondary</div>
+      <div class="swatch-hex">#F63C80</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#561474;"></div>
+      <div class="swatch-label">Dark contrast</div>
+      <div class="swatch-hex">#561474</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-block" style="background:#080810;"></div>
+      <div class="swatch-label">Background</div>
+      <div class="swatch-hex">#080810</div>
+    </div>
+    <div class="palette-combos">
+      <div class="combo-pill" style="background:#4394B1; color:#080810;">Main on BG</div>
+      <div class="combo-pill" style="background:#F63C80; color:#ffffff;">Sec on White</div>
+      <div class="combo-pill" style="background:#561474; color:#ffffff;">Dark / Text</div>
+      <div class="combo-pill" style="background:#080810; color:#4394B1; border:1px solid #4394B1;">Outlined</div>
+      <div class="combo-pill" style="background:#4394B1; color:#561474;">Main / Dark</div>
+      <div class="combo-pill" style="background:#F63C80; color:#561474;">Sec / Dark</div>
+    </div>
+  </div>
+</header>
+
+<!-- ── INDEX ── -->
+<nav class="font-index">
+  <a class="font-index-item" href="#s1"><span>01</span>Datatype</a>
+  <a class="font-index-item" href="#s2"><span>02</span>Bebas Neue</a>
+  <a class="font-index-item" href="#s3"><span>03</span>Rowdies</a>
+  <a class="font-index-item" href="#s4"><span>04</span>Libre Barcode 39</a>
+  <a class="font-index-item" href="#s5"><span>05</span>Turret Road</a>
+  <a class="font-index-item" href="#s6"><span>06</span>Digital Numbers</a>
+  <a class="font-index-item" href="#s7"><span>07</span>Rubik 80s Fade</a>
+  <a class="font-index-item" href="#s8"><span>08</span>Rubik Broken Fax</a>
+  <a class="font-index-item" href="#s9"><span>09</span>Unicode Symbols</a>
+</nav>
+
+<!-- ══════════════════════════════════════ -->
+<!-- 01  DATATYPE -->
+<!-- ══════════════════════════════════════ -->
+<section class="font-section" id="s1">
+  <div class="font-sidebar">
+    <div class="font-number">01 / 08</div>
+    <div style="font-family:'Datatype',monospace; font-size:22px; color:var(--white);">Datatype</div>
+    <div class="font-name-label">Monospaced · Technical<br>Google Fonts · OFL</div>
+    <div class="font-tags">
+      <span class="tag">Monospace</span>
+      <span class="tag">Body</span>
+      <span class="tag">UI labels</span>
+      <span class="tag">Code</span>
+    </div>
+    <div class="color-dots">
+      <div class="cdot" style="background:#4394B1;"></div>
+      <div class="cdot" style="background:#F63C80;"></div>
+      <div class="cdot" style="background:#561474;"></div>
+    </div>
+  </div>
+  <div class="font-main">
+    <div class="font-hero-text" style="font-family:'Datatype',monospace; font-size:64px; color:var(--white);">structured_data();</div>
+
+    <div class="font-specimen-row">
+      <div class="specimen-line" style="font-family:'Datatype',monospace; font-size:28px;">The quick brown fox jumps over the lazy dog</div>
+      <div class="specimen-line" style="font-family:'Datatype',monospace; font-size:18px;">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>
+      <div class="specimen-line" style="font-family:'Datatype',monospace; font-size:14px;">abcdefghijklmnopqrstuvwxyz !@#$%^&amp;*()_+-={}[]|\:;"'&lt;&gt;?,./`~</div>
+      <div class="specimen-line" style="font-family:'Datatype',monospace; font-size:11px; opacity:0.5;">12px — metadata, captions, technical labels, version numbers</div>
+    </div>
+
+    <div class="color-samples">
+      <div class="color-card" style="background:#4394B1;">
+        <div class="color-card-text" style="font-family:'Datatype',monospace; color:#080810;">sys.init()</div>
+        <div class="color-card-label" style="color:#080810;">Main on dark text</div>
+      </div>
+      <div class="color-card" style="background:#0e0e1a; border:1px solid #F63C80;">
+        <div class="color-card-text" style="font-family:'Datatype',monospace; color:#F63C80;">error_404</div>
+        <div class="color-card-label">Secondary outlined</div>
+      </div>
+      <div class="color-card" style="background:#561474;">
+        <div class="color-card-text" style="font-family:'Datatype',monospace; color:#ffffff;">status: OK</div>
+        <div class="color-card-label">Dark contrast bg</div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Unicode geometric symbols in Datatype</div>
+      <div class="symbol-row">
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">■</span><span class="sym-code">25A0</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">□</span><span class="sym-code">25A1</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">●</span><span class="sym-code">25CF</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">○</span><span class="sym-code">25CB</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">◎</span><span class="sym-code">25CE</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">◆</span><span class="sym-code">25C6</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">◇</span><span class="sym-code">25C7</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">▲</span><span class="sym-code">25B2</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">△</span><span class="sym-code">25B3</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">×</span><span class="sym-code">00D7</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">✕</span><span class="sym-code">2715</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">+</span><span class="sym-code">002B</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">·</span><span class="sym-code">00B7</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">▸</span><span class="sym-code">25B8</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Datatype',monospace;font-size:28px;">◉</span><span class="sym-code">25C9</span></div>
+      </div>
+    </div>
+
+    <div class="alphabet-block" style="font-family:'Datatype',monospace;">
+      A B C D E F G H I J K L M N O P Q R S T U V W X Y Z<br>
+      a b c d e f g h i j k l m n o p q r s t u v w x y z<br>
+      0 1 2 3 4 5 6 7 8 9 ! @ # $ % ^ &amp; * ( ) _ + - =
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- 02  BEBAS NEUE -->
+<!-- ══════════════════════════════════════ -->
+<section class="font-section" id="s2">
+  <div class="font-sidebar">
+    <div class="font-number">02 / 08</div>
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--white); letter-spacing:0.05em;">Bebas Neue</div>
+    <div class="font-name-label">Condensed Display<br>All-caps · Google Fonts · OFL</div>
+    <div class="font-tags">
+      <span class="tag">Display</span>
+      <span class="tag">Headlines</span>
+      <span class="tag">Poster</span>
+      <span class="tag">All-caps</span>
+    </div>
+    <div class="color-dots">
+      <div class="cdot" style="background:#4394B1;"></div>
+      <div class="cdot" style="background:#F63C80;"></div>
+      <div class="cdot" style="background:#561474;"></div>
+    </div>
+  </div>
+  <div class="font-main">
+    <div class="font-hero-text" style="font-family:'Bebas Neue',sans-serif; font-size:120px; color:var(--white); line-height:0.88;">BOLD<br><span style="color:var(--main);">DISPLAY</span><br>TYPE</div>
+
+    <div class="font-specimen-row">
+      <div class="specimen-line" style="font-family:'Bebas Neue',sans-serif; font-size:64px;">The Quick Brown Fox — 64px</div>
+      <div class="specimen-line" style="font-family:'Bebas Neue',sans-serif; font-size:48px;">Jumps Over The Lazy Dog — 48px</div>
+      <div class="specimen-line" style="font-family:'Bebas Neue',sans-serif; font-size:32px;">ABCDEFGHIJKLMNOPQRSTUVWXYZ — 32px</div>
+      <div class="specimen-line" style="font-family:'Bebas Neue',sans-serif; font-size:20px; opacity:0.5;">0123456789 !@#$%&amp;*() — 20px display minimum</div>
+    </div>
+
+    <div class="color-samples">
+      <div class="color-card" style="background:var(--bg3); border:1px solid #4394B1;">
+        <div class="color-card-text" style="font-family:'Bebas Neue',sans-serif; font-size:48px; color:#4394B1; line-height:1;">SYSTEM<br>ACTIVE</div>
+        <div class="color-card-label">Main on dark</div>
+      </div>
+      <div class="color-card" style="background:#F63C80;">
+        <div class="color-card-text" style="font-family:'Bebas Neue',sans-serif; font-size:48px; color:#ffffff; line-height:1;">ALERT<br>MODE</div>
+        <div class="color-card-label" style="color:rgba(255,255,255,0.6);">Secondary fill</div>
+      </div>
+      <div class="color-card" style="background:#561474;">
+        <div class="color-card-text" style="font-family:'Bebas Neue',sans-serif; font-size:48px; color:#4394B1; line-height:1;">DEEP<br>SCAN</div>
+        <div class="color-card-label">Dark bg / main text</div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Numerals &amp; glyphs — Bebas Neue</div>
+      <div class="symbol-row">
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">0</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">1</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">2</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">3</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">4</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">5</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">6</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">7</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">8</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px;">9</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px; color:var(--sec);">&amp;</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px; color:var(--sec);">@</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px; color:var(--sec);">%</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px; color:var(--sec);">#</span>
+        <span class="sym" style="font-family:'Bebas Neue',sans-serif;font-size:52px; color:var(--sec);">!</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- 03  ROWDIES -->
+<!-- ══════════════════════════════════════ -->
+<section class="font-section" id="s3">
+  <div class="font-sidebar">
+    <div class="font-number">03 / 08</div>
+    <div style="font-family:'Rowdies',sans-serif; font-size:24px; color:var(--white);">Rowdies</div>
+    <div class="font-name-label">Display · Bold personality<br>Light / Regular / Bold<br>Google Fonts · OFL</div>
+    <div class="font-tags">
+      <span class="tag">Display</span>
+      <span class="tag">Personality</span>
+      <span class="tag">Bold</span>
+      <span class="tag">Contrast</span>
+    </div>
+    <div class="color-dots">
+      <div class="cdot" style="background:#4394B1;"></div>
+      <div class="cdot" style="background:#F63C80;"></div>
+    </div>
+  </div>
+  <div class="font-main">
+    <div style="display:flex; flex-direction:column; gap:0;">
+      <div class="font-hero-text" style="font-family:'Rowdies',sans-serif; font-weight:300; font-size:64px; color:var(--muted);">Light 300</div>
+      <div class="font-hero-text" style="font-family:'Rowdies',sans-serif; font-weight:400; font-size:64px; color:var(--white);">Regular 400</div>
+      <div class="font-hero-text" style="font-family:'Rowdies',sans-serif; font-weight:700; font-size:64px; color:var(--sec);">Bold 700</div>
+    </div>
+
+    <div class="font-specimen-row">
+      <div class="specimen-line" style="font-family:'Rowdies',sans-serif; font-weight:700; font-size:40px;">The Quick Brown Fox Jumps</div>
+      <div class="specimen-line" style="font-family:'Rowdies',sans-serif; font-weight:400; font-size:28px;">Over the lazy dog — 28px regular</div>
+      <div class="specimen-line" style="font-family:'Rowdies',sans-serif; font-weight:300; font-size:20px;">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>
+    </div>
+
+    <div class="color-samples">
+      <div class="color-card" style="background:var(--bg3); border-left:3px solid #4394B1; padding-left:16px;">
+        <div class="color-card-text" style="font-family:'Rowdies',sans-serif; font-weight:700; font-size:32px; color:#4394B1; line-height:1.1;">Rowdy<br>Display</div>
+        <div class="color-card-label">Accent left border</div>
+      </div>
+      <div class="color-card" style="background:#F63C80;">
+        <div class="color-card-text" style="font-family:'Rowdies',sans-serif; font-weight:700; font-size:32px; color:#fff; line-height:1.1;">Big &amp;<br>Bold</div>
+        <div class="color-card-label" style="color:rgba(255,255,255,0.6);">Secondary fill</div>
+      </div>
+      <div class="color-card" style="background:var(--bg3); border:1px solid #561474;">
+        <div class="color-card-text" style="font-family:'Rowdies',sans-serif; font-weight:300; font-size:32px; color:#561474; line-height:1.1;">Thin<br>Ghost</div>
+        <div class="color-card-label">Dark outline, light weight</div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Weight comparison — Rowdies</div>
+      <div class="symbol-row" style="gap:24px;">
+        <span style="font-family:'Rowdies',sans-serif; font-weight:300; font-size:36px; color:var(--muted);">Aa Bb Cc</span>
+        <span style="font-family:'Rowdies',sans-serif; font-weight:400; font-size:36px; color:var(--white);">Aa Bb Cc</span>
+        <span style="font-family:'Rowdies',sans-serif; font-weight:700; font-size:36px; color:var(--sec);">Aa Bb Cc</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- 04  LIBRE BARCODE 39 -->
+<!-- ══════════════════════════════════════ -->
+<section class="font-section" id="s4">
+  <div class="font-sidebar">
+    <div class="font-number">04 / 08</div>
+    <div style="font-family:'Datatype',monospace; font-size:18px; color:var(--white);">Libre Barcode 39</div>
+    <div class="font-name-label">Barcode display font<br>Code 39 standard<br>Google Fonts · OFL</div>
+    <div class="font-tags">
+      <span class="tag">Barcode</span>
+      <span class="tag">Industrial</span>
+      <span class="tag">Display</span>
+      <span class="tag">Texture</span>
+    </div>
+    <div class="color-dots">
+      <div class="cdot" style="background:#4394B1;"></div>
+      <div class="cdot" style="background:#F63C80;"></div>
+    </div>
+  </div>
+  <div class="font-main">
+    <div class="barcode-demo">
+      <div class="barcode-line" style="font-family:'Libre Barcode 39',display; font-size:96px; color:var(--white);">FUTURISM</div>
+      <div class="barcode-line" style="font-family:'Libre Barcode 39',display; font-size:80px; color:var(--main);">4394B1</div>
+      <div class="barcode-line" style="font-family:'Libre Barcode 39',display; font-size:80px; color:var(--sec);">F63C80</div>
+    </div>
+
+    <div class="divider-label">color samples</div>
+
+    <div class="color-samples">
+      <div class="color-card" style="background:#080810; border:1px solid #4394B1;">
+        <div class="color-card-text" style="font-family:'Libre Barcode 39',display; font-size:48px; color:#4394B1; line-height:1;">MAIN</div>
+        <div class="color-card-label">Main on black</div>
+      </div>
+      <div class="color-card" style="background:#F63C80;">
+        <div class="color-card-text" style="font-family:'Libre Barcode 39',display; font-size:48px; color:#ffffff; line-height:1;">SEC</div>
+        <div class="color-card-label" style="color:rgba(255,255,255,0.6);">Secondary fill</div>
+      </div>
+      <div class="color-card" style="background:#561474;">
+        <div class="color-card-text" style="font-family:'Libre Barcode 39',display; font-size:48px; color:#4394B1; line-height:1;">DARK</div>
+        <div class="color-card-label">Dark bg / main text</div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Full alphabet in barcode — Code 39 supports A–Z, 0–9, and - . $ / + % space</div>
+      <div class="barcode-line" style="font-family:'Libre Barcode 39',display; font-size:56px; color:var(--muted); word-break:break-all;">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+      <div class="barcode-line" style="font-family:'Libre Barcode 39',display; font-size:56px; color:var(--main);">0123456789</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- 05  TURRET ROAD -->
+<!-- ══════════════════════════════════════ -->
+<section class="font-section" id="s5">
+  <div class="font-sidebar">
+    <div class="font-number">05 / 08</div>
+    <div style="font-family:'Turret Road',sans-serif; font-size:22px; color:var(--white);">Turret Road</div>
+    <div class="font-name-label">Geometric sans · Futuristic<br>Regular / Bold<br>Google Fonts · OFL</div>
+    <div class="font-tags">
+      <span class="tag">Futuristic</span>
+      <span class="tag">Geometric</span>
+      <span class="tag">UI</span>
+      <span class="tag">Display</span>
+    </div>
+    <div class="color-dots">
+      <div class="cdot" style="background:#4394B1;"></div>
+      <div class="cdot" style="background:#F63C80;"></div>
+      <div class="cdot" style="background:#561474;"></div>
+    </div>
+  </div>
+  <div class="font-main">
+    <div class="font-hero-text" style="font-family:'Turret Road',sans-serif; font-weight:700; font-size:80px; color:var(--white); letter-spacing:0.06em;">TURRET<br><span style="color:var(--main);">ROAD</span></div>
+
+    <div class="font-specimen-row">
+      <div class="specimen-line" style="font-family:'Turret Road',sans-serif; font-weight:700; font-size:40px;">The Quick Brown Fox Jumps — Bold</div>
+      <div class="specimen-line" style="font-family:'Turret Road',sans-serif; font-weight:400; font-size:32px;">Over The Lazy Dog — Regular</div>
+      <div class="specimen-line" style="font-family:'Turret Road',sans-serif; font-size:20px;">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>
+      <div class="specimen-line" style="font-family:'Turret Road',sans-serif; font-size:15px; opacity:0.5;">abcdefghijklmnopqrstuvwxyz — lowercase support</div>
+    </div>
+
+    <div class="color-samples">
+      <div class="color-card" style="background:var(--bg3); border:1px solid #4394B1;">
+        <div class="color-card-text" style="font-family:'Turret Road',sans-serif; font-weight:700; font-size:28px; color:#4394B1; line-height:1.2;">SECTOR<br>7G-ALPHA</div>
+        <div class="color-card-label">Main outlined</div>
+      </div>
+      <div class="color-card" style="background:#4394B1;">
+        <div class="color-card-text" style="font-family:'Turret Road',sans-serif; font-weight:700; font-size:28px; color:#080810; line-height:1.2;">GRID<br>ONLINE</div>
+        <div class="color-card-label" style="color:#080810;">Main fill / dark text</div>
+      </div>
+      <div class="color-card" style="background:var(--bg3); border:1px solid #F63C80;">
+        <div class="color-card-text" style="font-family:'Turret Road',sans-serif; font-weight:700; font-size:28px; color:#F63C80; line-height:1.2;">ALERT<br>STATUS</div>
+        <div class="color-card-label">Secondary outlined</div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Numerals &amp; punctuation — Turret Road</div>
+      <div class="symbol-row">
+        <span style="font-family:'Turret Road',sans-serif; font-weight:700; font-size:42px; color:var(--main);">0123</span>
+        <span style="font-family:'Turret Road',sans-serif; font-weight:700; font-size:42px; color:var(--sec);">4567</span>
+        <span style="font-family:'Turret Road',sans-serif; font-weight:700; font-size:42px; color:var(--white);">89</span>
+        <span style="font-family:'Turret Road',sans-serif; font-weight:400; font-size:42px; color:var(--muted);">: / . %</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- 06  DIGITAL NUMBERS -->
+<!-- ══════════════════════════════════════ -->
+<section class="font-section" id="s6">
+  <div class="font-sidebar">
+    <div class="font-number">06 / 08</div>
+    <div style="font-family:'Digital Numbers',monospace; font-size:20px; color:var(--white);">Digital Numbers</div>
+    <div class="font-name-label">Seven-segment display<br>LED / LCD aesthetic<br>Google Fonts · OFL</div>
+    <div class="font-tags">
+      <span class="tag">Numeric</span>
+      <span class="tag">LED</span>
+      <span class="tag">Seven-seg</span>
+      <span class="tag">Retro</span>
+    </div>
+    <div class="color-dots">
+      <div class="cdot" style="background:#4394B1;"></div>
+      <div class="cdot" style="background:#F63C80;"></div>
+    </div>
+  </div>
+  <div class="font-main">
+    <div class="font-hero-text" style="font-family:'Digital Numbers',monospace; font-size:100px; color:var(--main); letter-spacing:0.08em;">88:88:88</div>
+
+    <div class="font-specimen-row">
+      <div class="specimen-line" style="font-family:'Digital Numbers',monospace; font-size:60px; color:var(--white);">0123456789</div>
+      <div class="specimen-line" style="font-family:'Digital Numbers',monospace; font-size:48px; color:var(--sec);">12:34:56</div>
+      <div class="specimen-line" style="font-family:'Digital Numbers',monospace; font-size:36px; color:var(--muted);">99.99 / -42 / +88</div>
+      <div class="specimen-line" style="font-family:'Digital Numbers',monospace; font-size:24px; opacity:0.4;">Note: numerics only — no alphabetic glyphs</div>
+    </div>
+
+    <div class="color-samples">
+      <div class="color-card" style="background:#080810; border:1px solid #4394B1;">
+        <div class="color-card-text" style="font-family:'Digital Numbers',monospace; font-size:52px; color:#4394B1; line-height:1; letter-spacing:0.1em;">09:41</div>
+        <div class="color-card-label">Main / LCD blue</div>
+      </div>
+      <div class="color-card" style="background:#0a0a0a; border:1px solid #F63C80;">
+        <div class="color-card-text" style="font-family:'Digital Numbers',monospace; font-size:52px; color:#F63C80; line-height:1; letter-spacing:0.1em;">99.99</div>
+        <div class="color-card-label">Secondary / alert red</div>
+      </div>
+      <div class="color-card" style="background:#561474;">
+        <div class="color-card-text" style="font-family:'Digital Numbers',monospace; font-size:52px; color:#4394B1; line-height:1; letter-spacing:0.1em;">2026</div>
+        <div class="color-card-label">Dark bg / main</div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Full numeral set + punctuation glyphs</div>
+      <div class="symbol-row">
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">0</span><span class="sym-code">zero</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">1</span><span class="sym-code">one</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">2</span><span class="sym-code">two</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">3</span><span class="sym-code">three</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">4</span><span class="sym-code">four</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">5</span><span class="sym-code">five</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">6</span><span class="sym-code">six</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">7</span><span class="sym-code">seven</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">8</span><span class="sym-code">eight</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px;">9</span><span class="sym-code">nine</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px; color:var(--sec);">:</span><span class="sym-code">colon</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px; color:var(--sec);">.</span><span class="sym-code">dot</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px; color:var(--sec);">-</span><span class="sym-code">minus</span></div>
+        <div class="sym-pair"><span class="sym" style="font-family:'Digital Numbers',monospace;font-size:48px; color:var(--sec);">+</span><span class="sym-code">plus</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- 07  RUBIK 80S FADE -->
+<!-- ══════════════════════════════════════ -->
+<section class="font-section" id="s7">
+  <div class="font-sidebar">
+    <div class="font-number">07 / 08</div>
+    <div style="font-family:'Rubik 80s Fade',sans-serif; font-size:22px; color:var(--white);">Rubik 80s Fade</div>
+    <div class="font-name-label">Generative display<br>Faded / ghosted aesthetic<br>Google Fonts · OFL</div>
+    <div class="font-tags">
+      <span class="tag">Display</span>
+      <span class="tag">Retro</span>
+      <span class="tag">Fade</span>
+      <span class="tag">Generative</span>
+    </div>
+    <div class="color-dots">
+      <div class="cdot" style="background:#4394B1;"></div>
+      <div class="cdot" style="background:#F63C80;"></div>
+    </div>
+  </div>
+  <div class="font-main">
+    <div class="font-hero-text" style="font-family:'Rubik 80s Fade',sans-serif; font-size:96px; color:var(--white); letter-spacing:0.04em;">FADE OUT</div>
+
+    <div class="font-specimen-row">
+      <div class="specimen-line" style="font-family:'Rubik 80s Fade',sans-serif; font-size:52px;">The Quick Brown Fox</div>
+      <div class="specimen-line" style="font-family:'Rubik 80s Fade',sans-serif; font-size:36px;">Jumps Over The Lazy Dog</div>
+      <div class="specimen-line" style="font-family:'Rubik 80s Fade',sans-serif; font-size:24px;">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+      <div class="specimen-line" style="font-family:'Rubik 80s Fade',sans-serif; font-size:20px; opacity:0.5;">0123456789 — numerals and punctuation</div>
+    </div>
+
+    <div class="color-samples">
+      <div class="color-card" style="background:var(--bg3);">
+        <div class="color-card-text" style="font-family:'Rubik 80s Fade',sans-serif; font-size:42px; color:#4394B1; line-height:1.1;">GHOST<br>WAVE</div>
+        <div class="color-card-label">Main blue fade</div>
+      </div>
+      <div class="color-card" style="background:var(--bg3);">
+        <div class="color-card-text" style="font-family:'Rubik 80s Fade',sans-serif; font-size:42px; color:#F63C80; line-height:1.1;">NEON<br>DRIFT</div>
+        <div class="color-card-label">Secondary pink</div>
+      </div>
+      <div class="color-card" style="background:#4394B1;">
+        <div class="color-card-text" style="font-family:'Rubik 80s Fade',sans-serif; font-size:42px; color:#080810; line-height:1.1;">RETRO<br>SCAN</div>
+        <div class="color-card-label" style="color:#080810;">Main fill, dark text</div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">The fade effect makes heavy use at large sizes — best as display / texture</div>
+      <div class="symbol-row">
+        <span style="font-family:'Rubik 80s Fade',sans-serif; font-size:72px; color:var(--main);">A</span>
+        <span style="font-family:'Rubik 80s Fade',sans-serif; font-size:72px; color:var(--sec);">B</span>
+        <span style="font-family:'Rubik 80s Fade',sans-serif; font-size:72px; color:var(--white);">C</span>
+        <span style="font-family:'Rubik 80s Fade',sans-serif; font-size:72px; color:var(--main);">D</span>
+        <span style="font-family:'Rubik 80s Fade',sans-serif; font-size:72px; color:var(--sec);">E</span>
+        <span style="font-family:'Rubik 80s Fade',sans-serif; font-size:72px; color:var(--white);">F</span>
+        <span style="font-family:'Rubik 80s Fade',sans-serif; font-size:72px; color:var(--main);">G</span>
+        <span style="font-family:'Rubik 80s Fade',sans-serif; font-size:72px; color:var(--sec);">H</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- 08  RUBIK BROKEN FAX -->
+<!-- ══════════════════════════════════════ -->
+<section class="font-section" id="s8">
+  <div class="font-sidebar">
+    <div class="font-number">08 / 08</div>
+    <div style="font-family:'Rubik Broken Fax',sans-serif; font-size:20px; color:var(--white);">Rubik Broken Fax</div>
+    <div class="font-name-label">Generative display<br>Corrupted / glitch aesthetic<br>Google Fonts · OFL</div>
+    <div class="font-tags">
+      <span class="tag">Display</span>
+      <span class="tag">Glitch</span>
+      <span class="tag">Broken</span>
+      <span class="tag">Generative</span>
+    </div>
+    <div class="color-dots">
+      <div class="cdot" style="background:#4394B1;"></div>
+      <div class="cdot" style="background:#F63C80;"></div>
+      <div class="cdot" style="background:#561474;"></div>
+    </div>
+  </div>
+  <div class="font-main">
+    <div class="font-hero-text" style="font-family:'Rubik Broken Fax',sans-serif; font-size:88px; color:var(--white); letter-spacing:0.02em;">BROKEN<br><span style="color:var(--sec);">SIGNAL</span></div>
+
+    <div class="font-specimen-row">
+      <div class="specimen-line" style="font-family:'Rubik Broken Fax',sans-serif; font-size:48px;">The Quick Brown Fox</div>
+      <div class="specimen-line" style="font-family:'Rubik Broken Fax',sans-serif; font-size:32px;">Jumps Over The Lazy Dog</div>
+      <div class="specimen-line" style="font-family:'Rubik Broken Fax',sans-serif; font-size:22px;">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+      <div class="specimen-line" style="font-family:'Rubik Broken Fax',sans-serif; font-size:18px; opacity:0.5;">abcdefghijklmnopqrstuvwxyz 0123456789</div>
+    </div>
+
+    <div class="color-samples">
+      <div class="color-card" style="background:var(--bg3); border:1px solid #4394B1;">
+        <div class="color-card-text" style="font-family:'Rubik Broken Fax',sans-serif; font-size:38px; color:#4394B1; line-height:1.1;">CORRUPT<br>DATA</div>
+        <div class="color-card-label">Main outlined</div>
+      </div>
+      <div class="color-card" style="background:#F63C80;">
+        <div class="color-card-text" style="font-family:'Rubik Broken Fax',sans-serif; font-size:38px; color:#fff; line-height:1.1;">GLITCH<br>MODE</div>
+        <div class="color-card-label" style="color:rgba(255,255,255,0.6);">Secondary fill</div>
+      </div>
+      <div class="color-card" style="background:#561474;">
+        <div class="color-card-text" style="font-family:'Rubik Broken Fax',sans-serif; font-size:38px; color:#F63C80; line-height:1.1;">DARK<br>STATIC</div>
+        <div class="color-card-label">Dark bg / secondary</div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">The broken stroke effect — most visible at large sizes</div>
+      <div class="symbol-row">
+        <span style="font-family:'Rubik Broken Fax',sans-serif; font-size:72px; color:var(--main);">A</span>
+        <span style="font-family:'Rubik Broken Fax',sans-serif; font-size:72px; color:var(--sec);">B</span>
+        <span style="font-family:'Rubik Broken Fax',sans-serif; font-size:72px; color:var(--white);">R</span>
+        <span style="font-family:'Rubik Broken Fax',sans-serif; font-size:72px; color:var(--main);">S</span>
+        <span style="font-family:'Rubik Broken Fax',sans-serif; font-size:72px; color:var(--sec);">X</span>
+        <span style="font-family:'Rubik Broken Fax',sans-serif; font-size:72px; color:var(--white);">0</span>
+        <span style="font-family:'Rubik Broken Fax',sans-serif; font-size:72px; color:var(--main);">8</span>
+        <span style="font-family:'Rubik Broken Fax',sans-serif; font-size:72px; color:var(--sec);">&amp;</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- 09  UNICODE SYMBOL REFERENCE -->
+<!-- ══════════════════════════════════════ -->
+<section id="s9" style="padding:56px 60px; border-bottom:1px solid var(--border); background:var(--bg2);">
+  <div style="margin-bottom:36px;">
+    <div style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--sec);margin-bottom:8px;">09 / Reference</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--white);">Unicode Symbol Library</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:8px;">Use these with Datatype or any monospaced font set. Rendered via system font fallback.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;">
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Geometric Shapes — U+25A0–25FF</div>
+      <div class="symbol-row">
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">■</span><span class="sym-code">25A0</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">□</span><span class="sym-code">25A1</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▪</span><span class="sym-code">25AA</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▫</span><span class="sym-code">25AB</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▬</span><span class="sym-code">25AC</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▲</span><span class="sym-code">25B2</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">△</span><span class="sym-code">25B3</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▴</span><span class="sym-code">25B4</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▸</span><span class="sym-code">25B8</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▹</span><span class="sym-code">25B9</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▼</span><span class="sym-code">25BC</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▽</span><span class="sym-code">25BD</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◆</span><span class="sym-code">25C6</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◇</span><span class="sym-code">25C7</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◈</span><span class="sym-code">25C8</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◉</span><span class="sym-code">25C9</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◎</span><span class="sym-code">25CE</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">●</span><span class="sym-code">25CF</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">○</span><span class="sym-code">25CB</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◌</span><span class="sym-code">25CC</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◍</span><span class="sym-code">25CD</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◐</span><span class="sym-code">25D0</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◑</span><span class="sym-code">25D1</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">◒</span><span class="sym-code">25D2</span></div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Dingbats — U+2700–27BF</div>
+      <div class="symbol-row">
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">✕</span><span class="sym-code">2715</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">✖</span><span class="sym-code">2716</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">✗</span><span class="sym-code">2717</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">✚</span><span class="sym-code">251A</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">✦</span><span class="sym-code">2726</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">✧</span><span class="sym-code">2727</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">✩</span><span class="sym-code">2729</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">✴</span><span class="sym-code">2734</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">✵</span><span class="sym-code">2735</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❋</span><span class="sym-code">274B</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❏</span><span class="sym-code">274F</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❐</span><span class="sym-code">2750</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❑</span><span class="sym-code">2751</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❒</span><span class="sym-code">2752</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❖</span><span class="sym-code">2756</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❘</span><span class="sym-code">2758</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❙</span><span class="sym-code">2759</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❚</span><span class="sym-code">275A</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❜</span><span class="sym-code">275C</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">❝</span><span class="sym-code">275D</span></div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Miscellaneous Technical — U+2300–23FF</div>
+      <div class="symbol-row">
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌀</span><span class="sym-code">2300</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌁</span><span class="sym-code">2301</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌂</span><span class="sym-code">2302</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌖</span><span class="sym-code">2316</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌗</span><span class="sym-code">2317</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌘</span><span class="sym-code">2318</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌙</span><span class="sym-code">2319</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌬</span><span class="sym-code">232C</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌭</span><span class="sym-code">232D</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⌰</span><span class="sym-code">2330</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⍟</span><span class="sym-code">235F</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⎔</span><span class="sym-code">2394</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⏣</span><span class="sym-code">23E3</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⏤</span><span class="sym-code">23E4</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⏥</span><span class="sym-code">23E5</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⏦</span><span class="sym-code">23E6</span></div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Box Drawing + Block Elements — U+2500–259F</div>
+      <div class="symbol-row">
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">─</span><span class="sym-code">2500</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">│</span><span class="sym-code">2502</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">┼</span><span class="sym-code">253C</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">╋</span><span class="sym-code">254B</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">╔</span><span class="sym-code">2554</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">╗</span><span class="sym-code">2557</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">╚</span><span class="sym-code">255A</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">╝</span><span class="sym-code">255D</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">█</span><span class="sym-code">2588</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▓</span><span class="sym-code">2593</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▒</span><span class="sym-code">2592</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">░</span><span class="sym-code">2591</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▄</span><span class="sym-code">2584</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▀</span><span class="sym-code">2580</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▌</span><span class="sym-code">258C</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">▐</span><span class="sym-code">2590</span></div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Math operators — U+2200–22FF</div>
+      <div class="symbol-row">
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">∅</span><span class="sym-code">2205</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">∆</span><span class="sym-code">2206</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">∇</span><span class="sym-code">2207</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">∞</span><span class="sym-code">221E</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">∴</span><span class="sym-code">2234</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">∵</span><span class="sym-code">2235</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">≡</span><span class="sym-code">2261</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">≠</span><span class="sym-code">2260</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⊕</span><span class="sym-code">2295</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⊗</span><span class="sym-code">2297</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⊞</span><span class="sym-code">229E</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⊟</span><span class="sym-code">229F</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⊠</span><span class="sym-code">22A0</span></div>
+        <div class="sym-pair"><span class="sym" style="font-size:32px;">⊡</span><span class="sym-code">22A1</span></div>
+      </div>
+    </div>
+
+    <div class="symbol-strip">
+      <div class="symbol-strip-label">Pattern preview — as texture / background fill</div>
+      <div style="font-family:'Datatype',monospace; font-size:14px; line-height:1.6; letter-spacing:0.08em; color:var(--main); word-break:break-all;">
+        ◎ □ × ◆ ● ✕ ▲ · ◎ □ × ◆ ● ✕ ▲ ·<br>
+        □ ○ ✕ ■ ◇ ◎ × + □ ○ ✕ ■ ◇ ◎ × +<br>
+        <span style="color:var(--sec);">× ◎ □ × ◎ □ × ◎ □ × ◎ □ × ◎ □ × ◎</span><br>
+        ▲ · ◆ ○ ■ × ◎ □ ▲ · ◆ ○ ■ × ◎ □<br>
+        <span style="color:rgba(67,148,177,0.35);">· · ◎ · □ · × · ◆ · ● · ✕ · ▲ · · ·</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer style="padding:40px 60px; display:flex; justify-content:space-between; align-items:center; opacity:0.3;">
+  <div style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase;">Font Preview Document</div>
+  <div style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase;">#4394B1 · #F63C80 · #561474</div>
+  <div style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase;">Google Fonts · OFL · 2026</div>
+</footer>
+
+</body>
+</html>
