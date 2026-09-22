@@ -8,9 +8,9 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
-    "game-c978e5957e9f.pck": {
-      "bytes": 109916,
-      "sha256": "b88fa263e8f4c26a650332058d17fdd8f5ca9c2371f10e293ab0d6a26b128adf"
+    "game-5ebf472fb75e.pck": {
+      "bytes": 178124,
+      "sha256": "17d654d35323dda98aa357030a7b11d360342acbec45242e86644119fa65fbc4"
     },
     "index.audio.position.worklet.js": {
       "bytes": 2973,
@@ -22,7 +22,7 @@
     },
     "index.html": {
       "bytes": 5442,
-      "sha256": "298cb9bf80ee7380dc032b7a64c01132e843d0c5b527f1d0d56354ff7f3353e3"
+      "sha256": "94727453c9013b967879340e5c982b3d3b2ab43663fe1cee61994022294f19b6"
     },
     "index.js": {
       "bytes": 279815,
@@ -38,7 +38,7 @@
     },
     "source-revision.txt": {
       "bytes": 41,
-      "sha256": "69a80fc3b8c0c4b59aaf88641a0bd135b8b14c89cc27b2e3d27988b673272674"
+      "sha256": "b748b7263296388b97b530c983cdb05333df96ee0208275242673fbdb56d7e27"
     }
   },
   "godot": "4.7.2.stable.official.ed1daf0bf",
@@ -46,5 +46,5 @@
     "playwright": "1.62.1",
     "pngjs": "7.0.0"
   },
-  "source_revision": "c978e5957e9f7172e4b3895728162b4f58b9d2f4"
+  "source_revision": "5ebf472fb75edf4eeb1e842f7c38f8a06e4b47fd"
 }
