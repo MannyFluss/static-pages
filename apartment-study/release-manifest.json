@@ -16,20 +16,20 @@
       "sha256": "aca89d2eef74d4c90602b7a4ffbb4dcafb357bb5c993e5b10d05979ff70ac2e4"
     },
     "furnished-bistro.png": {
-      "bytes": 52670,
-      "sha256": "6be60f4325b24b0819513649ffb65c83deb157e2a31f5533ddd31009c0f91cde"
+      "bytes": 38395,
+      "sha256": "bc3eea846830ed7fe7b5d38819abaf551110aee413fb27c77ca98650f247893a"
     },
     "furnished-kitchen.png": {
-      "bytes": 57475,
-      "sha256": "d95c885236217e19bbecc99b39ed888589555768c58a12b24fe76deab6fe12e3"
+      "bytes": 44981,
+      "sha256": "cc8cb96bee3e97ba9d052a37751c23023556f6de2c0696e1991c66f903a05565"
     },
     "furnished-media.png": {
-      "bytes": 51950,
-      "sha256": "1aa2bfc35ae9875753107622ae45092f4c05e6e36f5d001c8bd75de2b3da3736"
+      "bytes": 43855,
+      "sha256": "0b3be9bddebbc0598bc6effb530739e7177e373b3d0843144725e7b307c325d3"
     },
-    "game-07cd71815329.pck": {
-      "bytes": 262356,
-      "sha256": "7820f2699361b16fa87e70f8983342cf600403a51154ae7aec3ed4d0195f55f5"
+    "game-0aee994d1ced.pck": {
+      "bytes": 262580,
+      "sha256": "056fcf573e9008642cd44eb8531b636b2cc92915248caf67065ba15059316480"
     },
     "hood-cabinet.png": {
       "bytes": 39710,
@@ -44,8 +44,8 @@
       "sha256": "5b476a9c9ce642c0ee4256436d1bc31d9c38f868aca0f9a8e2a57c18d2dec2a3"
     },
     "index.html": {
-      "bytes": 7514,
-      "sha256": "22a63fc572c82460e7caa8b717358aa42290cc43a707b2349d5e1d2c79ae4b7a"
+      "bytes": 7741,
+      "sha256": "b8a1610d26ce933bb2a29c61b9def9c8147d84ba8272360bafc5b52a68a1d84f"
     },
     "index.js": {
       "bytes": 279815,
@@ -69,11 +69,11 @@
     },
     "play.html": {
       "bytes": 5636,
-      "sha256": "8b076eb4222063650a2f95e17a023553311ff69e5c86c409d615801d5e002d45"
+      "sha256": "c7ae0f705dded282018f46c5c6ff5ba029db6e48250472dbc3ac86fb6ff2d1e1"
     },
     "source-revision.txt": {
       "bytes": 41,
-      "sha256": "d69c88174afb8b7ed56922afe950d6a72ab049b70a72ab64e9bc525d3908705a"
+      "sha256": "690b7304d06ad0d76102c2c381ceea3814b8df9f8ed7ec40986ed8bdcce14bcb"
     },
     "wall-shelves.png": {
       "bytes": 36731,
@@ -85,5 +85,5 @@
     "playwright": "1.62.1",
     "pngjs": "7.0.0"
   },
-  "source_revision": "07cd71815329dc564e727f6d65bf39f35d957a38"
+  "source_revision": "0aee994d1ced81fb971f691f9b7dba571d6ccccb"
 }
