@@ -1,6 +1,9 @@
 {
   "checks": [
     "native-validation",
+    "object-review-forward_plus",
+    "object-review-gl_compatibility",
+    "object-gallery",
     "local-browser"
   ],
   "files": {
@@ -8,9 +11,29 @@
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
-    "game-ee6ce6d5af7e.pck": {
-      "bytes": 178172,
-      "sha256": "4169f2c7ed91df7c6693651a2c490a59df5e03d5df35b0f689d243ea2fd1016e"
+    "bistro-set.png": {
+      "bytes": 48546,
+      "sha256": "aca89d2eef74d4c90602b7a4ffbb4dcafb357bb5c993e5b10d05979ff70ac2e4"
+    },
+    "furnished-bistro.png": {
+      "bytes": 52670,
+      "sha256": "6be60f4325b24b0819513649ffb65c83deb157e2a31f5533ddd31009c0f91cde"
+    },
+    "furnished-kitchen.png": {
+      "bytes": 57475,
+      "sha256": "d95c885236217e19bbecc99b39ed888589555768c58a12b24fe76deab6fe12e3"
+    },
+    "furnished-media.png": {
+      "bytes": 51950,
+      "sha256": "1aa2bfc35ae9875753107622ae45092f4c05e6e36f5d001c8bd75de2b3da3736"
+    },
+    "game-07cd71815329.pck": {
+      "bytes": 262356,
+      "sha256": "7820f2699361b16fa87e70f8983342cf600403a51154ae7aec3ed4d0195f55f5"
+    },
+    "hood-cabinet.png": {
+      "bytes": 39710,
+      "sha256": "b701dc928aa7dc9a02634c274a980e635fe9d77977bcac5512f9fd7a78cacea4"
     },
     "index.audio.position.worklet.js": {
       "bytes": 2973,
@@ -21,8 +44,8 @@
       "sha256": "5b476a9c9ce642c0ee4256436d1bc31d9c38f868aca0f9a8e2a57c18d2dec2a3"
     },
     "index.html": {
-      "bytes": 5442,
-      "sha256": "1f7b98424787cba1baf836dac51d52e57cfd320abb8979ea0ef43ae320fa370b"
+      "bytes": 7514,
+      "sha256": "22a63fc572c82460e7caa8b717358aa42290cc43a707b2349d5e1d2c79ae4b7a"
     },
     "index.js": {
       "bytes": 279815,
@@ -36,9 +59,25 @@
       "bytes": 39514754,
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
+    "kitchen-counter.png": {
+      "bytes": 24819,
+      "sha256": "8e1cceae2665a5d953806189e83b1eb4886c35bb442efaba936ec2ecf483250d"
+    },
+    "media-console.png": {
+      "bytes": 28439,
+      "sha256": "17074a2d6651f0ead3b60646a891e68b3543d6010ed3d5705a3bf7ced9d0aec3"
+    },
+    "play.html": {
+      "bytes": 5636,
+      "sha256": "8b076eb4222063650a2f95e17a023553311ff69e5c86c409d615801d5e002d45"
+    },
     "source-revision.txt": {
       "bytes": 41,
-      "sha256": "2e6c53ef0adf59104b7273a576a88b763716d40e97291d95ffe390d2c38ddf8b"
+      "sha256": "d69c88174afb8b7ed56922afe950d6a72ab049b70a72ab64e9bc525d3908705a"
+    },
+    "wall-shelves.png": {
+      "bytes": 36731,
+      "sha256": "840b81d6a8598e8b61cbb0f6e49c75bf91192f561447a325911869b1664228a2"
     }
   },
   "godot": "4.7.2.stable.official.ed1daf0bf",
@@ -46,5 +85,5 @@
     "playwright": "1.62.1",
     "pngjs": "7.0.0"
   },
-  "source_revision": "ee6ce6d5af7ed15e6865712048b911b9c656bc62"
+  "source_revision": "07cd71815329dc564e727f6d65bf39f35d957a38"
 }
