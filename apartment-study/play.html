@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-0f1d19cab428.pck":262564},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-0f1d19cab428.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-ba4a30ce70ed.pck":272944},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-ba4a30ce70ed.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -213,6 +213,119 @@ const engine = new Engine(GODOT_CONFIG);
 	}
 }());
 		</script>
-	<a href="./" style="position:fixed;left:12px;bottom:8px;z-index:20;background:#e5ece8;color:#203b33;padding:8px 12px;border-radius:5px;font:14px sans-serif;text-decoration:none">Photo review</a></body>
+	<style>
+:root{--paper:#edf3f5;--ink:#22343c;--blue:#12546b;--accent:#007e96;--line:#c4d4db}
+#layout-tools{font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);position:fixed;inset:0;z-index:30;pointer-events:none}
+#layout-tools [hidden]{display:none!important}#layout-tools *{box-sizing:border-box}
+#layout-tools button,#layout-tools select,#layout-tools textarea{font:inherit;color:inherit}
+#layout-tools button,#layout-tools select{min-height:48px;border:1px solid var(--line);background:white;border-radius:8px;padding:9px 12px;cursor:pointer;touch-action:manipulation}
+#layout-tools button:disabled{opacity:.4;cursor:default}#layout-tools button:focus-visible,#layout-tools select:focus-visible,#layout-tools textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#layout-tools button.primary{background:var(--blue);color:white;border-color:var(--blue)}
+#layout-tools button[aria-pressed=true]{background:var(--blue);color:white}
+#edit-launch{pointer-events:auto;position:absolute;right:max(16px,env(safe-area-inset-right));top:90px;box-shadow:0 3px 12px #0002}
+#edit-panel{pointer-events:auto;position:absolute;right:0;top:0;bottom:0;width:350px;background:var(--paper);padding:18px 18px max(18px,env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain;touch-action:pan-y;border-left:1px solid var(--line)}
+#layout-tools h2{font-size:25px;line-height:1.15;margin:0 0 5px;letter-spacing:-.5px}#layout-tools p{margin:6px 0 14px}#layout-tools .small{font-size:14px;color:#475e69}
+#layout-tools .row{display:flex;gap:8px;margin:9px 0}#layout-tools .row>*{flex:1;min-width:0}
+#layout-tools label{display:block;font-weight:600;margin-top:14px}#layout-tools select{width:100%;margin-top:5px}
+#object-position{font-variant-numeric:tabular-nums;font-size:14px;min-height:40px;margin-top:9px}
+#move-pad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:12px 0}#move-pad span{display:grid;place-items:center;color:#475e69;font-size:13px}#move-pad button{padding:8px 3px}
+#map-tools{pointer-events:auto;position:absolute;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));right:362px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#map-tools strong{background:var(--paper);padding:10px;border-radius:8px;font-size:14px}#map-tools button{min-width:48px;padding:8px}
+#draft-notice{background:#dcebf0;border-radius:8px;padding:10px;margin:12px 0}#draft-notice p{margin:0 0 8px}
+#layout-tools .divider{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}
+#edit-actions{position:sticky;bottom:-18px;background:var(--paper);padding:12px 0;z-index:1}
+#editor-message{min-height:20px;font-size:14px;margin-top:8px}
+#feedback-dialog{border:0;border-radius:16px;padding:24px;width:min(540px,calc(100% - 24px));max-height:90dvh;background:var(--paper);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:auto;touch-action:pan-y}
+#feedback-dialog::backdrop{background:#102a36aa}#feedback-dialog textarea{width:100%;min-height:100px;padding:12px;background:white;border:1px solid var(--line);border-radius:8px;touch-action:auto}#feedback-dialog button{min-height:48px;font:inherit;border-radius:8px;padding:10px;border:1px solid var(--line)}#feedback-dialog .row{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}#feedback-dialog .row>*{flex:1}#feedback-dialog h2{margin-top:0}#feedback-dialog .primary{background:var(--blue);color:white}#feedback-dialog label{display:block;margin:12px 0 6px}#feedback-dialog ul{padding-left:20px}#feedback-dialog #copy-fallback{font-size:12px}
+body.layout-editing #canvas{width:calc(100% - 350px)!important;height:100%!important;left:0!important;top:0!important;position:absolute!important}
+body.layout-editing>a{display:none!important}
+@media(max-width:700px),(max-height:500px){#edit-panel{width:310px;padding:12px}#map-tools{right:322px}body.layout-editing #canvas{width:calc(100% - 310px)!important}#layout-tools h2{font-size:22px}}
+@media(max-width:600px) and (min-height:501px){#edit-panel{width:100%;top:52%;height:48%;border-left:0;border-top:1px solid var(--line);padding:14px 16px max(22px,env(safe-area-inset-bottom))}body.layout-editing #canvas{width:100%!important;height:52%!important}#map-tools{right:12px}#map-tools strong{flex:1}#layout-tools .row{margin:7px 0}#layout-tools label{margin-top:10px}}
+</style>
+<div id="layout-tools" hidden>
+<button id="edit-launch" class="primary" disabled>Edit layout</button>
+<div id="map-tools" hidden><strong>↑ North · Backyard</strong><button data-action="zoom" data-amount="-1" aria-label="Zoom in">＋</button><button data-action="zoom" data-amount="1" aria-label="Zoom out">−</button><button data-action="home">Fit room</button></div>
+<section id="edit-panel" aria-label="Layout editor" hidden>
+<h2>Place things your way.</h2><p class="small">Select an object, then drag it in the plan. No second finger needed.</p>
+<div id="draft-notice" hidden><p>There’s a saved draft on this browser.</p><button id="restore-draft">Restore draft</button></div>
+<label for="edit-object">Object</label><select id="edit-object"></select>
+<div id="object-position"></div>
+<div class="row"><button data-action="focus">Find object</button><button data-action="reset">Reset object</button></div>
+<label for="edit-step">Move by</label><select id="edit-step"><option value="0.25">¼ inch · fine</option><option value="1" selected>1 inch</option><option value="6">6 inches</option><option value="12">1 foot</option></select>
+<div id="move-pad"><span></span><button data-action="move" data-axis="z" data-direction="-1">↑ North</button><span></span><button data-action="move" data-axis="x" data-direction="-1">← West</button><span id="step-caption">1 inch</span><button data-action="move" data-axis="x" data-direction="1">East →</button><span></span><button data-action="move" data-axis="z" data-direction="1">↓ South</button><span></span></div>
+<div class="row"><button data-action="move" data-axis="y" data-direction="1">Raise</button><button data-action="move" data-axis="y" data-direction="-1">Lower</button></div>
+<div class="row"><button data-action="rotate" data-degrees="15">↶ Turn 15°</button><button data-action="rotate" data-degrees="-15">Turn 15° ↷</button></div>
+<div class="row"><button id="editor-undo" data-action="undo">Undo</button><button id="editor-redo" data-action="redo">Redo</button></div>
+<details class="divider"><summary>Move the view</summary><div class="row"><button data-action="pan" data-z="-1">North</button><button data-action="pan" data-z="1">South</button></div><div class="row"><button data-action="pan" data-x="-1">West</button><button data-action="pan" data-x="1">East</button></div></details>
+<div class="row divider" id="edit-actions"><button id="edit-done">View in room</button><button id="export-feedback" class="primary">Export feedback</button></div>
+<p id="editor-message" role="status" aria-live="polite"></p>
+<p class="small">Draft stays in this browser. Export it to send here. Walls stay fixed; furniture can overlap while you arrange it.</p>
+</section></div>
+<dialog id="feedback-dialog" aria-labelledby="feedback-title"><h2 id="feedback-title">Send this layout back.</h2><p>Save or share the feedback file, then attach it in Codex and say “Use $reference-to-scene to apply this layout feedback.” Nothing is sent automatically.</p><ul id="feedback-summary"></ul><label for="feedback-note">Anything else to change?</label><textarea id="feedback-note" maxlength="4000" placeholder="For example: this is the right spot for the TV."></textarea><div class="row"><button id="save-feedback" class="primary">Save file</button><button id="share-feedback">Share file</button><button id="copy-feedback">Copy feedback</button></div><p id="export-message" role="status" aria-live="polite"></p><textarea id="copy-fallback" aria-label="Feedback text to copy" readonly hidden></textarea><button id="close-feedback">Back to editor</button></dialog>
+<script>
+(() => {
+'use strict';
+const $=id=>document.getElementById(id), tools=$('layout-tools'), panel=$('edit-panel'), dialog=$('feedback-dialog');
+let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true;
+const revision='ba4a30ce70ed8ab87fde6a6d5ec89292baa1c67b';
+const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),yaw_degrees:+t.yaw_degrees.toFixed(5)});
+const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||Math.abs(a.yaw_degrees-b.yaw_degrees)>0.0001;
+function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:o.label,before:clean(o),after:clean(state.values[o.id])}));}
+function key(){return 'apartment-editor-v1:'+state.baseline.base_layout_hash;}
+function send(command){if(callback)callback(JSON.stringify(command));}
+function saveDraft(){if(!hadInitial)return;try{localStorage.setItem(key(),JSON.stringify({values:state.values,note:$('feedback-note').value}));}catch(e){storageOK=false;}}
+function receive(text){
+ const previous=state?JSON.stringify(state.values):null;
+ state=JSON.parse(text);
+ if(!hadInitial){
+  $('edit-object').replaceChildren(...state.baseline.objects.map(o=>{const option=document.createElement('option');option.value=o.id;option.textContent=o.label;return option;}));
+  try{draft=JSON.parse(localStorage.getItem(key()));}catch(e){storageOK=false;}
+  hadInitial=true; $('draft-notice').hidden=!draft;
+ }else if(state.active&&JSON.stringify(state.values)!==previous){saveDraft();}
+ tools.hidden=false; $('edit-launch').disabled=false; $('edit-launch').hidden=state.active;
+ panel.hidden=!state.active; $('map-tools').hidden=!state.active;
+ document.body.classList.toggle('layout-editing',state.active);
+ $('edit-object').value=state.selected; $('editor-undo').disabled=!state.can_undo; $('editor-redo').disabled=!state.can_redo;
+ const selected=state.baseline.objects.find(o=>o.id===state.selected), current=state.values[state.selected];
+ const delta=current.position_m.map((n,i)=>(n-selected.position_m[i])/0.0254);
+ const axis=(n,plus,minus)=>Math.abs(n)<.005?'':`${Math.abs(n).toFixed(2).replace(/\.00$/,'')}″ ${n>=0?plus:minus}`;
+ $('object-position').textContent=[axis(delta[0],'east','west'),axis(delta[2],'south','north'),axis(delta[1],'up','down')].filter(Boolean).join(' · ')||'At original position';
+ $('object-position').textContent+=` · ${Math.round(current.yaw_degrees)}°`;
+ const n=changes().length;
+ $('editor-message').textContent=storageOK?(n?`${n} object${n===1?'':'s'} changed · draft saved here`:'No changes yet.'): 'Browser storage unavailable. Export before leaving.';
+ $('export-feedback').disabled=n===0;
+ window.dispatchEvent(new Event('apartment-editor-state'));
+}
+window.apartmentEditor={connectGame(fn){callback=fn;},disconnectGame(){callback=null;tools.hidden=true;document.body.classList.remove('layout-editing');hadInitial=false;},receive,getState(){return state;}};
+$('edit-launch').onclick=()=>send({action:'open'});
+$('edit-done').onclick=()=>{send({action:'close'});$('canvas').focus({preventScroll:true});};
+$('edit-object').onchange=e=>send({action:'select',id:e.target.value});
+$('edit-step').onchange=e=>{send({action:'step',inches:+e.target.value});$('step-caption').textContent=e.target.selectedOptions[0].textContent;};
+for(const button of tools.querySelectorAll('[data-action]'))button.onclick=()=>{const cmd={...button.dataset};for(const k of ['direction','degrees','amount','x','z'])if(k in cmd)cmd[k]=+cmd[k];send(cmd);};
+$('restore-draft').onclick=()=>{if(draft){send({action:'restore',values:draft.values});$('feedback-note').value=String(draft.note||'');$('draft-notice').hidden=true;saveDraft();}};
+$('feedback-note').oninput=saveDraft;
+function payload(){return {schema:'apartment-feedback/v1',project:'apartment-study',source_revision:revision,base_layout_hash:state.baseline.base_layout_hash,created_at:new Date().toISOString(),coordinates:{units:'meters',north:'-Z',east:'+X',up:'+Y'},changes:changes(),note:$('feedback-note').value};}
+function text(){return JSON.stringify(payload(),null,2)+'\n';}
+function filename(){return 'apartment-feedback-'+new Date().toISOString().slice(0,10)+'.json';}
+$('export-feedback').onclick=()=>{
+ $('feedback-summary').replaceChildren(...changes().map(c=>{const li=document.createElement('li');li.textContent=c.label;return li;}));
+ $('export-message').textContent='';$('copy-fallback').hidden=true;
+ $('share-feedback').hidden=!(navigator.canShare&&navigator.canShare({files:[new File(['{}'],'feedback.json',{type:'application/json'})]}));
+ dialog.showModal();
+};
+$('save-feedback').onclick=()=>{const url=URL.createObjectURL(new Blob([text()],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=filename();a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);$('export-message').textContent='File download requested. Attach it in your Codex conversation.';};
+$('share-feedback').onclick=async()=>{try{await navigator.share({files:[new File([text()],filename(),{type:'application/json'})],title:'Apartment layout feedback'});$('export-message').textContent='Share sheet closed.';}catch(e){$('export-message').textContent=e.name==='AbortError'?'Share cancelled. Your draft is still here.':'Sharing unavailable. Use Save file or Copy feedback.';}};
+$('copy-feedback').onclick=async()=>{try{await navigator.clipboard.writeText(text());$('export-message').textContent='Copied. Paste into Codex with “Use $reference-to-scene to apply this layout feedback.”';}catch(e){$('copy-fallback').hidden=false;$('copy-fallback').value=text();$('copy-fallback').select();$('export-message').textContent='Select and copy the text below, then paste it in Codex.';}};
+$('close-feedback').onclick=()=>dialog.close();
+const canvas=$('canvas');
+const point=e=>{const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];};
+canvas.addEventListener('pointerdown',e=>{if(!state?.active||pointer!==null||e.button>0)return;e.preventDefault();pointer=e.pointerId;canvas.setPointerCapture(pointer);send({action:'drag_start',point:point(e)});});
+canvas.addEventListener('pointermove',e=>{if(pointer!==e.pointerId)return;e.preventDefault();send({action:'drag',point:point(e)});});
+function end(e,cancel=false){if(pointer!==e.pointerId)return;pointer=null;send({action:cancel?'drag_cancel':'drag_end'});}
+canvas.addEventListener('pointerup',e=>end(e));canvas.addEventListener('pointercancel',e=>end(e,true));canvas.addEventListener('lostpointercapture',e=>end(e,true));
+window.addEventListener('blur',()=>{if(pointer!==null){pointer=null;send({action:'drag_cancel'});}});
+window.addEventListener('beforeunload',e=>{if(state&&changes().length){e.preventDefault();e.returnValue='';}});
+})();
+</script>
+<a href="./" style="position:fixed;left:12px;bottom:8px;z-index:20;background:#e5ece8;color:#203b33;padding:8px 12px;border-radius:5px;font:14px sans-serif;text-decoration:none">Photo review</a></body>
 </html>
 
