@@ -29,9 +29,9 @@
       "bytes": 43855,
       "sha256": "0b3be9bddebbc0598bc6effb530739e7177e373b3d0843144725e7b307c325d3"
     },
-    "game-ba4a30ce70ed.pck": {
-      "bytes": 272944,
-      "sha256": "d78f4680a6949eb1ba51a4d75da1c6d0d4faf19c27b228d2be16a4b1f743cbd7"
+    "game-2c2a1edd8b86.pck": {
+      "bytes": 273856,
+      "sha256": "f11faff36d43e93e9dafe08c7b97dc9066b24c79a6411175146f2e6b696e1705"
     },
     "hood-cabinet.png": {
       "bytes": 39710,
@@ -47,7 +47,7 @@
     },
     "index.html": {
       "bytes": 8056,
-      "sha256": "3edfd74fcbc1bad500438a9ca23589ab83db3bc59c16d78251cf5c08ddc0a50b"
+      "sha256": "ac4c82d0e448c8cf383461e9f4ce2ad753107c0d50861415dc9fde4a6257cb79"
     },
     "index.js": {
       "bytes": 279815,
@@ -70,12 +70,12 @@
       "sha256": "17074a2d6651f0ead3b60646a891e68b3543d6010ed3d5705a3bf7ced9d0aec3"
     },
     "play.html": {
-      "bytes": 20788,
-      "sha256": "aec79f70e164eb74e2f69e094ab92903978181051fb799d52efc104807fa6cdd"
+      "bytes": 23096,
+      "sha256": "af46647d2bb5af6630789400c0bd8e6b37d57c426feac30b823b04d12ea85ee3"
     },
     "source-revision.txt": {
       "bytes": 41,
-      "sha256": "6350cbccde9fc4216ff3b86432215a7017247cf3522d1889b7fbb037fde8a62c"
+      "sha256": "fcbb8e8d28442f136d306b0b38f936e032545033463a607356b22e2edb27a773"
     },
     "wall-shelves.png": {
       "bytes": 36731,
@@ -87,5 +87,5 @@
     "playwright": "1.62.1",
     "pngjs": "7.0.0"
   },
-  "source_revision": "ba4a30ce70ed8ab87fde6a6d5ec89292baa1c67b"
+  "source_revision": "2c2a1edd8b86025537699873ccb6c2b9a12e5908"
 }
