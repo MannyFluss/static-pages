@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-c51f41541f35.pck":292668},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-c51f41541f35.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-b2003617bb2e.pck":319032},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-b2003617bb2e.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -246,7 +246,8 @@ body.layout-editing>a{display:none!important}
 <div id="gesture-readout" hidden></div>
 <div id="transform-bar" hidden>
 <div id="selection-line"><span id="selection-title">Tap an object.</span><button id="selection-parent" hidden>Select group</button></div>
-<div id="selection-actions" class="control-row"><button id="objects-toggle" aria-expanded="false">Objects</button><button id="focus-object" hidden>Focus</button></div>
+<div id="selection-actions" class="control-row"><button id="objects-toggle" aria-expanded="false">Objects</button><button id="parts-toggle" hidden>Parts</button><button id="focus-object" hidden>Focus</button></div>
+<div id="parts-panel" hidden><div class="control-row"><label for="parts-list" id="parts-label">Parts</label><button id="scope-root">Whole room</button></div><select id="parts-list" aria-label="Select a part" style="width:100%"></select></div>
 <div id="objects-panel" hidden><label for="object-list">Select an object or group</label><select id="object-list"><option value="">Choose an object…</option></select></div>
 <div id="view-controls" hidden><div class="control-row"><button data-view="0,0,-0.3">Forward</button><button data-view="0,0,0.3">Back</button><button id="view-reset">Player view</button></div><div class="control-row"><button data-view="-0.3,0,0">Left</button><button data-view="0.3,0,0">Right</button><button data-view="0,0.3,0">Up</button><button data-view="0,-0.3,0">Down</button></div></div>
 <details id="precision" hidden><summary>Precision</summary>
@@ -262,11 +263,11 @@ body.layout-editing>a{display:none!important}
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('canvas'), svg=$('gizmo'), dialog=$('feedback-dialog');
-let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false;
-const revision='c51f41541f3533966903fafce616b7d1d3cd0868', colors=['#ff6b70','#82db8f','#78a8ff'];
+let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false,partsScope=null;
+const revision='b2003617bb2ea09c97a301b646b196b5b03f2c6a', colors=['#ff6b70','#82db8f','#78a8ff'];
 const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),rotation_degrees:t.rotation_degrees.map(n=>+n.toFixed(5))});
 const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||a.rotation_degrees.some((n,i)=>Math.abs(n-b.rotation_degrees[i])>0.0001);
-function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:o.label,before:clean(o),after:clean(state.values[o.id])}));}
+function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:(o.parent?state.baseline.objects.find(p=>p.id===o.parent).label+' › ':'')+o.label,before:clean(o),after:clean(state.values[o.id])}));}
 function key(){return 'apartment-editor-v3:'+state.baseline.base_layout_hash;}
 function send(command){if(callback)callback(JSON.stringify(command));}
 function saveDraft(){if(!hadInitial)return;try{localStorage.setItem(key(),JSON.stringify({values:state.values,note:$('feedback-note').value}));}catch(e){storageOK=false;}}
@@ -300,6 +301,7 @@ function receive(text){
  const previous=state?JSON.stringify(state.values):null;state=JSON.parse(text);cssGizmo(state.gizmo);
  if(!hadInitial){
   try{draft=JSON.parse(localStorage.getItem(key()));
+   for(const migration of state.baseline.compatible_v3||[]){if(draft)break;const old=JSON.parse(localStorage.getItem('apartment-editor-v3:'+migration.hash));if(old&&migration.ids.every(id=>old.values?.[id])&&Object.keys(old.values).every(id=>migration.ids.includes(id)))draft={note:old.note,values:{...state.values,...old.values}};}
    if(!draft&&state.baseline.v2_hash){const old=JSON.parse(localStorage.getItem('apartment-editor-v2:'+state.baseline.v2_hash));if(old)draft={note:old.note,values:{...state.values,...old.values}};}
    if(!draft&&state.baseline.legacy_hash){const old=JSON.parse(localStorage.getItem('apartment-editor-v1:'+state.baseline.legacy_hash));if(old){draft={note:old.note,values:{...state.values,...Object.fromEntries(Object.entries(old.values).map(([k,v])=>[k,{position_m:v.position_m,rotation_degrees:[0,v.yaw_degrees,0]}]))}};}}
   }catch(e){storageOK=false;}
@@ -312,16 +314,22 @@ function receive(text){
  $('editor-undo').disabled=!state.can_undo;$('editor-redo').disabled=!state.can_redo;
  $('editor-undo').setAttribute('aria-label','Undo '+state.undo_label);$('editor-undo').title='Undo '+state.undo_label;$('editor-redo').setAttribute('aria-label','Redo '+state.redo_label);
  $('view-mode').setAttribute('aria-pressed',state.view_mode);$('view-controls').hidden=!state.view_mode;
- if(!objectsReady){for(const o of state.baseline.objects){const option=document.createElement('option');option.value=o.id;option.textContent=o.label+(o.group?' (group)':'');$('object-list').append(option);}objectsReady=true;}
+ if(!objectsReady){for(const o of state.baseline.objects){const option=document.createElement('option');option.value=o.id;option.textContent=(o.parent?state.baseline.objects.find(p=>p.id===o.parent)?.label+' › ':'')+o.label+(o.group?' (group)':'');$('object-list').append(option);}objectsReady=true;}
  $('object-list').value=state.selected;
  const selected=state.baseline.objects.find(o=>o.id===state.selected);
+ const scope=state.selection_scope||'',scopeRecord=state.baseline.objects.find(o=>o.id===scope);
+ $('parts-toggle').hidden=!selected?.group;$('parts-toggle').setAttribute('aria-expanded',scope===state.selected);
+ $('parts-panel').hidden=!scope;
+ if(partsScope!==scope){$('parts-list').replaceChildren(new Option('Tap a part in the scene, or choose…',''),...state.baseline.objects.filter(o=>o.parent===scope).map(o=>new Option(o.label+(o.group?' ›':''),o.id)));partsScope=scope;}
+ $('parts-list').value=selected?.parent===scope?state.selected:'';
+ $('parts-label').textContent=scopeRecord?scope.split('/').map((_,i)=>state.baseline.objects.find(o=>o.id===scope.split('/').slice(0,i+1).join('/'))?.label).join(' › '):'Parts';
  $('selection-title').textContent=selected?selected.label:'Tap an object in the room.';
  $('transform-fields').hidden=!selected;$('reset-object').hidden=!selected;$('precision').hidden=!selected||state.view_mode;$('focus-object').hidden=!selected;
  $('selection-parent').hidden=!selected?.parent;if(selected?.parent)$('selection-parent').textContent=state.baseline.objects.find(o=>o.id===selected.parent).label+' ↑';
- $('position-frame').textContent=selected?.parent?'Position within the group. Arrows move along world axes.':'World position · X east · Y up · Z south';
+ $('position-frame').textContent=selected?.parent?'Position relative to '+state.baseline.objects.find(o=>o.id===selected.parent).label+'. Arrows use world axes.':'World position · X east · Y up · Z south';
  $('position-label').textContent='Position '+units;
  if(selected){for(const [name,field]of [['position','position_m'],['rotation','rotation_degrees']])for(let i=0;i<3;i++){const input=$(name+'-'+i);if(document.activeElement!==input)input.value=+(state.values[state.selected][field][i]/(name==='position'&&units==='in'?.0254:1)).toFixed(name==='position'?4:2);if(name==='position'){input.step=units==='in'?.1:.00254;input.setAttribute('aria-label','Position '+'XYZ'[i]+' in '+(units==='in'?'inches':'meters'));}}}
- $('edit-hint').textContent=state.view_mode?'Drag the scene to look. Use buttons to move. Done returns to your player view.':selected?(state.mode==='move'?'Drag an axis arrow. X east · Y up · Z south.':'Drag a colored ring. World axes · center pivot.'):'The game is paused. Tap a furnishing to select it.';
+ $('edit-hint').textContent=state.view_mode?'Drag the scene to look. Use buttons to move. Done returns to your player view.':selected?(state.mode==='move'?'Drag an axis arrow. X east · Y up · Z south.':'Drag a colored ring. World axes · center pivot.'):(scopeRecord?'Tap a part within '+scopeRecord.label+', or choose from the list.':'The game is paused. Tap a furnishing to select it.');
  const n=changes().length;$('export-feedback').disabled=false;
  const status=state.error||(storageOK?(n?(pointer?.kind==='gizmo'?'Adjusting…':`${n} changed · saved on this device`):''):'Storage unavailable. Export before leaving.');if($('editor-message').textContent!==status)$('editor-message').textContent=status;
  if(state.error&&!state.active)$('edit-launch').title=state.error;
@@ -335,6 +343,9 @@ $('edit-done').onclick=()=>{send({action:'close'});canvas.focus({preventScroll:t
 $('move-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'move'});};$('rotate-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'rotate'});};
  $('view-mode').onclick=()=>send({action:'view_mode',value:!state.view_mode});$('view-reset').onclick=()=>send({action:'view_reset'});
  $('focus-object').onclick=()=>send({action:'focus'});$('selection-parent').onclick=()=>send({action:'select',id:state.baseline.objects.find(o=>o.id===state.selected).parent});
+ $('parts-toggle').onclick=()=>{send({action:'view_mode',value:false});send({action:'parts'});};
+ $('parts-list').onchange=e=>{if(e.target.value)send({action:'select',id:e.target.value});};
+ $('scope-root').onclick=()=>send({action:'scope_root'});
  $('objects-toggle').onclick=()=>{const visible=$('objects-panel').hidden;$('objects-panel').hidden=!visible;$('objects-toggle').setAttribute('aria-expanded',visible);};
  $('object-list').onchange=e=>{if(e.target.value)send({action:'select',id:e.target.value});};
  document.querySelectorAll('[data-view]').forEach(el=>el.onclick=()=>{const [x,y,z]=el.dataset.view.split(',').map(Number);send({action:'view_step',x,y,z});});
