@@ -91,7 +91,7 @@ body {
 }
 		</style>
 		<style>html,body,canvas{touch-action:none;overscroll-behavior:none}canvas{outline:none}</style>
-	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23203b33%22/%3E%3Cpath d=%22M6 15 16 6 26 15v12H6Z%22 fill=%22%23e5ece8%22/%3E%3Cpath d=%22M14 20h5v7h-5Z%22 fill=%22%2342664f%22/%3E%3C/svg%3E"></head>
+	<style>html,body{width:100%;height:100%;overflow:hidden}#canvas{position:fixed;inset:0;width:100vw!important;height:100dvh!important}</style><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23203b33%22/%3E%3Cpath d=%22M6 15 16 6 26 15v12H6Z%22 fill=%22%23e5ece8%22/%3E%3Cpath d=%22M14 20h5v7h-5Z%22 fill=%22%2342664f%22/%3E%3C/svg%3E"></head>
 	<body>
 		<canvas id="canvas">
 			Your browser does not support the canvas tag.
@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-bed94bf36141.pck":279520},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-bed94bf36141.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-c51f41541f35.pck":292668},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-c51f41541f35.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -263,7 +263,7 @@ body.layout-editing>a{display:none!important}
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('canvas'), svg=$('gizmo'), dialog=$('feedback-dialog');
 let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false;
-const revision='bed94bf36141c256b8db86e6fdf51c6c01e11e8b', colors=['#ff6b70','#82db8f','#78a8ff'];
+const revision='c51f41541f3533966903fafce616b7d1d3cd0868', colors=['#ff6b70','#82db8f','#78a8ff'];
 const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),rotation_degrees:t.rotation_degrees.map(n=>+n.toFixed(5))});
 const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||a.rotation_degrees.some((n,i)=>Math.abs(n-b.rotation_degrees[i])>0.0001);
 function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:o.label,before:clean(o),after:clean(state.values[o.id])}));}
@@ -363,6 +363,38 @@ function viewport(){const v=window.visualViewport;$('layout-tools').style.setPro
  window.addEventListener('resize',viewport);window.visualViewport?.addEventListener('resize',viewport);window.visualViewport?.addEventListener('scroll',viewport);
  document.addEventListener('keydown',e=>{if(!state?.active||/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName))return;if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();send({action:e.shiftKey?'redo':'undo'});}if(e.key==='Escape'){send({action:'drag_cancel'});}});
 window.addEventListener('beforeunload',e=>{if(state&&(changes().length||$('feedback-note').value.trim())){e.preventDefault();e.returnValue='';}});
+})();
+</script>
+<style>
+#arrival-launch,#arrival-dialog{font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1c2330}
+#arrival-launch{position:fixed;right:max(16px,env(safe-area-inset-right));top:146px;z-index:29;min-height:46px;padding:10px 16px;border:1px solid #b6bdc8;border-radius:10px;background:#f7f7fa;touch-action:manipulation;cursor:pointer}
+#arrival-launch[hidden]{display:none}
+#arrival-dialog{box-sizing:border-box;width:min(380px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;touch-action:pan-y;overscroll-behavior:contain;border:1px solid #b6bdc8;border-radius:18px;padding:22px;background:#f7f7fa;box-shadow:0 12px 44px #0004}
+#arrival-dialog::backdrop{background:#14203066}#arrival-dialog h2{font-size:22px;margin:0 0 8px}#arrival-dialog p{margin:8px 0 18px;color:#505b6d}#arrival-dialog button{box-sizing:border-box;display:block;width:100%;min-height:48px;margin:10px 0;font:inherit;border:0;border-radius:10px;background:#e9ebef;color:#1c2330;padding:12px;touch-action:manipulation;cursor:pointer}#arrival-dialog #arrival-all{background:#0066cc;color:white}#arrival-dialog button:active{filter:brightness(.88)}#arrival-dialog :focus-visible,#arrival-launch:focus-visible{outline:3px solid #0066cc;outline-offset:3px}#arrival-count{font-variant-numeric:tabular-nums}
+</style>
+<button id="arrival-launch" hidden aria-haspopup="dialog">Cheats</button>
+<dialog id="arrival-dialog" aria-labelledby="arrival-title" aria-describedby="arrival-description">
+<h2 id="arrival-title">Cheats</h2><p id="arrival-description">The game is paused. Skip to the furnished room or try the arrivals again.</p>
+<button id="arrival-all" autofocus>Reveal all objects</button>
+<button id="arrival-restart">Restart arrivals</button>
+<p id="arrival-count" role="status" aria-live="polite"></p>
+<button id="arrival-close">Back to game</button>
+</dialog>
+<script>
+(()=>{
+const launch=document.getElementById('arrival-launch'),dialog=document.getElementById('arrival-dialog'),count=document.getElementById('arrival-count');let callback=null,state=null;
+const send=data=>callback?.(JSON.stringify(data));
+window.apartmentArrivals={connectGame(fn){callback=fn;},disconnectGame(){callback=null;launch.hidden=true;if(dialog.open)dialog.close();},receive(text){state=JSON.parse(text);launch.hidden=state.editor||state.portal;const next=`${state.arrived.length} of ${state.total} objects present. ${state.status}`;if(count.textContent!==next)count.textContent=next;},getState(){return state;},requestState(){send({action:'state'});}};
+launch.onclick=()=>{send({action:'menu',open:true});dialog.showModal();};
+document.getElementById('arrival-all').onclick=()=>send({action:'all'});
+document.getElementById('arrival-restart').onclick=()=>send({action:'restart'});
+document.getElementById('arrival-close').onclick=()=>dialog.close();
+dialog.addEventListener('close',()=>{send({action:'menu',open:false});launch.focus({preventScroll:true});});
+dialog.addEventListener('keydown',e=>e.stopPropagation());
+document.addEventListener('visibilitychange',()=>send({action:'interrupt',value:document.hidden}));
+window.addEventListener('blur',()=>send({action:'interrupt',value:true}));
+window.addEventListener('focus',()=>send({action:'interrupt',value:document.hidden}));
+window.addEventListener('resize',()=>{send({action:'interrupt',value:true});requestAnimationFrame(()=>send({action:'interrupt',value:document.hidden}));});
 })();
 </script>
 <a href="./" style="position:fixed;left:12px;bottom:8px;z-index:20;background:#e5ece8;color:#203b33;padding:8px 12px;border-radius:5px;font:14px sans-serif;text-decoration:none">Photo review</a></body>
