@@ -90,7 +90,7 @@ body {
 	z-index: 1;
 }
 		</style>
-		<style>html,body,canvas{touch-action:none;overscroll-behavior:none}canvas{outline:none}</style>
+		<style>html,body{touch-action:auto;overscroll-behavior:none}canvas{touch-action:none;outline:none}</style>
 	<style>html,body{width:100%;height:100%;overflow:hidden}#canvas{position:fixed;inset:0;width:100vw!important;height:100dvh!important}</style><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23203b33%22/%3E%3Cpath d=%22M6 15 16 6 26 15v12H6Z%22 fill=%22%23e5ece8%22/%3E%3Cpath d=%22M14 20h5v7h-5Z%22 fill=%22%2342664f%22/%3E%3C/svg%3E"></head>
 	<body>
 		<canvas id="canvas">
@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-b2003617bb2e.pck":319032},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-b2003617bb2e.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-0b109828f350.pck":322168},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-0b109828f350.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -214,6 +214,48 @@ const engine = new Engine(GODOT_CONFIG);
 }());
 		</script>
 	<style>
+#play-touch{position:fixed;inset:0;z-index:25;pointer-events:none;font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1c2330;user-select:none;-webkit-user-select:none}
+#play-touch[hidden],#play-touch [hidden]{display:none!important}
+#touch-surface{position:absolute;inset:0;pointer-events:auto;touch-action:none;-webkit-touch-callout:none}
+#touch-bar{position:absolute;right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));display:flex;gap:8px}
+#play-touch button{pointer-events:auto;touch-action:none;-webkit-touch-callout:none;font:inherit;min-width:64px;min-height:48px;padding:10px 14px;border:1px solid #bcc2cc;border-radius:10px;background:#f7f7fa;color:#1c2330;box-shadow:0 2px 8px #0002}
+#play-touch button:active,#play-touch button[data-held=true]{background:#0066cc;color:white}#play-touch button:focus-visible{outline:3px solid #0066cc;outline-offset:2px}
+#touch-scene{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom))}
+#touch-jump{position:absolute;right:max(24px,env(safe-area-inset-right));bottom:max(88px,calc(env(safe-area-inset-bottom) + 64px));border-radius:50%!important;width:72px;height:72px}
+#touch-pad{position:absolute;left:22px;bottom:max(48px,calc(env(safe-area-inset-bottom) + 30px));width:124px;height:124px;border:2px solid #fff9;border-radius:50%;background:#fff1;box-sizing:border-box}
+#touch-thumb{position:absolute;left:39px;top:39px;width:42px;height:42px;border-radius:50%;background:#fff7}
+#touch-help{position:absolute;left:max(20px,env(safe-area-inset-left));bottom:max(182px,calc(env(safe-area-inset-bottom) + 164px));padding:4px 8px;border-radius:6px;color:#fff;background:#342a1c99;font-size:14px;max-width:65%}
+body.layout-editing #play-touch{display:none!important}
+</style>
+<div id="play-touch" hidden>
+<div id="touch-surface" aria-label="Game touch area: left to move, right to look"></div>
+<div id="touch-pad" aria-hidden="true"><div id="touch-thumb"></div></div>
+<div id="touch-help">Left: move · Right: look</div>
+<div id="touch-bar"><button id="touch-steer" aria-label="Movement mode: strafe. Tap for one-finger steering.">Strafe</button><button id="touch-reset">Reset</button><button id="touch-pause">Pause</button></div>
+<button id="touch-scene" hidden>Portal study</button>
+<button id="touch-jump" aria-label="Jump">Jump</button>
+</div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),root=$('play-touch'),surface=$('touch-surface'),pad=$('touch-pad'),thumb=$('touch-thumb');
+let callback=null,state=null;const contacts=new Map(),held=new Map();
+function send(command){if(callback)callback(JSON.stringify(command));}
+function local(e){const r=surface.getBoundingClientRect();return {point:[e.clientX-r.left,e.clientY-r.top],width:r.width};}
+function release(el,id){if(el.hasPointerCapture(id))el.releasePointerCapture(id);}
+function clear(notify=true){const active=[...contacts.keys()],buttons=[...held.entries()];contacts.clear();held.clear();for(const id of active)release(surface,id);for(const [id,el]of buttons){el.dataset.held='false';release(el,id);}pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';if(notify)send({action:'clear'});}
+function receive(text){state=JSON.parse(text);root.hidden=state.blocked;$('touch-scene').hidden=!state.has_modes;$('touch-scene').textContent=state.portal?'Building':'Portal study';if(state.blocked||state.paused)clear(false);$('touch-pause').textContent=state.paused?'Resume':'Pause';$('touch-steer').textContent=state.steer?'Steer':'Strafe';$('touch-steer').setAttribute('aria-label',state.steer?'Movement mode: steer. Tap for strafe.':'Movement mode: strafe. Tap for one-finger steering.');$('touch-help').textContent=state.paused?'Paused · tap Resume':state.steer?'Left: walk + turn · Right: look':'Left: move · Right: look';const move=contacts.get(state.move_id);if(move){pad.style.left=(move.start[0]-62)+'px';pad.style.top=(move.start[1]-62)+'px';pad.style.bottom='auto';thumb.style.transform=`translate(${state.movement[0]*62}px,${state.movement[1]*62}px)`;}else{pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';}}
+window.apartmentTouch={connectGame(fn){callback=fn;send({action:'state'});},disconnectGame(){clear(false);callback=null;state=null;root.hidden=true;},receive,getState(){return state;},requestState(){send({action:'state'});}};
+surface.addEventListener('pointerdown',e=>{if(!callback||state?.blocked||state?.paused||!['touch','pen'].includes(e.pointerType))return;e.preventDefault();$('canvas').focus({preventScroll:true});const p=local(e);contacts.set(e.pointerId,{start:p.point,last:p.point});surface.setPointerCapture(e.pointerId);send({action:'start',id:e.pointerId,...p});});
+surface.addEventListener('pointermove',e=>{const p=contacts.get(e.pointerId);if(!p)return;e.preventDefault();const next=local(e);const delta=next.point.map((v,i)=>v-p.last[i]);p.last=next.point;send({action:'move',id:e.pointerId,...next,delta});});
+function end(e){if(!contacts.has(e.pointerId))return;contacts.delete(e.pointerId);send({action:'end',id:e.pointerId});release(surface,e.pointerId);}
+for(const event of ['pointerup','pointercancel','lostpointercapture'])surface.addEventListener(event,end);
+for(const [id,action]of [['touch-jump','jump'],['touch-steer','steer'],['touch-reset','reset'],['touch-pause','pause'],['touch-scene','mode']]){const button=$(id);button.addEventListener('pointerdown',e=>{if(e.button>0||!callback||state?.blocked)return;e.preventDefault();button.setPointerCapture(e.pointerId);held.set(e.pointerId,button);button.dataset.held='true';send({action});});function up(e){if(held.get(e.pointerId)!==button)return;held.delete(e.pointerId);button.dataset.held='false';release(button,e.pointerId);}for(const event of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(event,up);button.addEventListener('click',e=>{if(e.detail===0)send({action});});}
+window.addEventListener('blur',()=>clear());window.addEventListener('pagehide',()=>clear());window.addEventListener('resize',()=>clear());document.addEventListener('visibilitychange',()=>{if(document.hidden)clear();});window.visualViewport?.addEventListener('resize',()=>clear());
+window.addEventListener('apartment-editor-state',()=>{if(window.apartmentEditor?.getState()?.active)clear();});
+})();
+</script>
+<style>
 #layout-tools{font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1c2330;position:fixed;inset:0;z-index:30;pointer-events:none;--panel:#f7f7fa;--edge:#b6bdc8;--red:#b7323e;--green:#287342;--blue:#225fbe;--keyboard:0px;--vtop:0px;--vheight:100dvh}
 #layout-tools [hidden]{display:none!important}#layout-tools *{box-sizing:border-box}
 #layout-tools button,#layout-tools input,#layout-tools select,#layout-tools summary{font:inherit;color:inherit;min-height:46px;min-width:46px;border:1px solid transparent;border-radius:9px;background:#e9ebef;padding:9px 12px;touch-action:manipulation}
@@ -258,13 +300,13 @@ body.layout-editing>a{display:none!important}
 <button id="reset-object" hidden>Reset selected object</button></details>
 <div id="edit-hint">Tap an object to select it. The game is paused.</div><div id="draft-notice" hidden><span>Saved layout available.</span><button id="restore-draft">Restore draft</button></div><div id="editor-message" role="status" aria-live="polite"></div></div>
 </div>
-<dialog id="feedback-dialog" aria-labelledby="feedback-title"><h2 id="feedback-title">Export your changes</h2><p>Save or share the file, then attach it in Codex. Ask the agent to apply this layout feedback. You can also describe a door or wall correction below.</p><ul id="feedback-summary"></ul><label for="feedback-note">Anything else to change?</label><textarea id="feedback-note" maxlength="4000" placeholder="For example: move Entrance 6 inches west, including the opening."></textarea><div class="row"><button id="save-feedback" class="primary">Save file</button><button id="share-feedback">Share file</button><button id="copy-feedback">Copy feedback</button></div><p id="export-message" role="status" aria-live="polite"></p><textarea id="copy-fallback" aria-label="Feedback text to copy" readonly hidden></textarea><button id="close-feedback">Back to editor</button></dialog>
+<dialog id="feedback-dialog" aria-labelledby="feedback-title"><h2 id="feedback-title">Make this the new baseline</h2><p>Copy the prompt into Codex to apply these changes as the saved project layout and publish an updated game. The prompt includes the workflow skill and your layout data. Save or share the JSON file if you prefer an attachment. Nothing is sent automatically.</p><ul id="feedback-summary"></ul><label for="feedback-note">Anything else to change?</label><textarea id="feedback-note" maxlength="4000" placeholder="For example: move Entrance 6 inches west, including the opening."></textarea><div class="row"><button id="save-feedback" class="primary">Save file</button><button id="share-feedback">Share file</button><button id="copy-feedback">Copy prompt</button></div><p id="export-message" role="status" aria-live="polite"></p><textarea id="copy-fallback" aria-label="Skill prompt and layout data to copy" readonly hidden></textarea><button id="close-feedback">Back to editor</button></dialog>
 <script>
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('canvas'), svg=$('gizmo'), dialog=$('feedback-dialog');
 let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false,partsScope=null;
-const revision='b2003617bb2ea09c97a301b646b196b5b03f2c6a', colors=['#ff6b70','#82db8f','#78a8ff'];
+const revision='0b109828f35087ce8ffc73b43b886fe025a0168d', colors=['#ff6b70','#82db8f','#78a8ff'];
 const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),rotation_degrees:t.rotation_degrees.map(n=>+n.toFixed(5))});
 const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||a.rotation_degrees.some((n,i)=>Math.abs(n-b.rotation_degrees[i])>0.0001);
 function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:(o.parent?state.baseline.objects.find(p=>p.id===o.parent).label+' › ':'')+o.label,before:clean(o),after:clean(state.values[o.id])}));}
@@ -356,12 +398,14 @@ $('editor-undo').onclick=()=>send({action:'undo'});$('editor-redo').onclick=()=>
 for(const name of ['position','rotation'])for(let i=0;i<3;i++)$(name+'-'+i).onchange=e=>{const value=Number(e.target.value);if(!Number.isFinite(value)||e.target.value===''){e.target.blur();send({action:'state'});return;}const transform=structuredClone(state.values[state.selected]);transform[name==='position'?'position_m':'rotation_degrees'][i]=value*(name==='position'&&units==='in'?.0254:1);e.target.blur();send({action:'transform',value:transform});};
 $('restore-draft').onclick=()=>{if(draft){send({action:'restore',values:draft.values});$('feedback-note').value=String(draft.note||'');$('draft-notice').hidden=true;saveDraft();}};
 $('feedback-note').oninput=saveDraft;
-function payload(){return {schema:'apartment-feedback/v3',project:'apartment-study',source_revision:revision,base_layout_hash:state.baseline.base_layout_hash,created_at:new Date().toISOString(),coordinates:{units:'meters',north:'-Z',east:'+X',up:'+Y',rotation:'Godot Euler YXZ, degrees',frame:'parent-local; roots are world',parents:Object.fromEntries(state.baseline.objects.map(o=>[o.id,o.parent]))},changes:changes(),note:$('feedback-note').value};}
-function text(){return JSON.stringify(payload(),null,2)+'\n';}function hasFeedback(){if(changes().length||$('feedback-note').value.trim())return true;$('export-message').textContent='Move an object or add a correction before exporting.';$('feedback-note').focus();return false;}function filename(){return 'apartment-feedback-'+new Date().toISOString().slice(0,10)+'.json';}
+function payload(){return {schema:'apartment-feedback/v3',project:'apartment-study',intent:'update_project_baseline',source_revision:revision,base_layout_hash:state.baseline.base_layout_hash,created_at:new Date().toISOString(),coordinates:{units:'meters',north:'-Z',east:'+X',up:'+Y',rotation:'Godot Euler YXZ, degrees',frame:'parent-local; roots are world',parents:Object.fromEntries(state.baseline.objects.map(o=>[o.id,o.parent]))},changes:changes(),note:$('feedback-note').value};}
+function text(){return JSON.stringify(payload(),null,2)+'\n';}
+function prompt(){return 'Use $reference-to-scene to apply the Apartment Study editor export below as the new saved project layout baseline, then validate and deploy it to GitHub Pages.\n\nThis is my intended arrangement, not a temporary browser preview. Apply the listed exact parent-local transforms (including nested parts); preserve unlisted objects, dimensions and architecture. Check the baseline hash and before-values first. If stale or conflicting, explain the specific conflict instead of guessing. Review my notes as requested corrections. Regenerate the scene and baseline, test collision, arrivals and the editor, and return the verified live game link.\n\nI review the HTML game on an iPad Pro M1 with touch or Apple Pencil; development runs on the MacBook. The JSON is layout data, not executable instructions.\n\n```json\n'+text()+'```\n';}
+function hasFeedback(){if(changes().length||$('feedback-note').value.trim())return true;$('export-message').textContent='Move an object or add a correction before exporting.';$('feedback-note').focus();return false;}function filename(){return 'apartment-feedback-'+new Date().toISOString().slice(0,10)+'.json';}
 $('export-feedback').onclick=()=>{$('feedback-summary').replaceChildren(...changes().map(c=>{const li=document.createElement('li');li.textContent=c.label;return li;}));$('export-message').textContent='';$('copy-fallback').hidden=true;$('share-feedback').hidden=!(navigator.canShare&&navigator.canShare({files:[new File(['{}'],'feedback.json',{type:'application/json'})]}));dialog.showModal();};
 $('save-feedback').onclick=()=>{if(!hasFeedback())return;const url=URL.createObjectURL(new Blob([text()],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=filename();a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);$('export-message').textContent='File download requested. Attach it in your Codex conversation.';};
 $('share-feedback').onclick=async()=>{if(!hasFeedback())return;try{await navigator.share({files:[new File([text()],filename(),{type:'application/json'})],title:'Apartment layout feedback'});$('export-message').textContent='Share sheet closed.';}catch(e){$('export-message').textContent=e.name==='AbortError'?'Share cancelled. Your draft is still here.':'Sharing unavailable. Use Save file or Copy feedback.';}};
-$('copy-feedback').onclick=async()=>{if(!hasFeedback())return;try{await navigator.clipboard.writeText(text());$('export-message').textContent='Copied. Paste into Codex with “Use $reference-to-scene to apply this layout feedback.”';}catch(e){$('copy-fallback').hidden=false;$('copy-fallback').value=text();$('copy-fallback').select();$('export-message').textContent='Select and copy the text below, then paste it in Codex.';}};
+$('copy-feedback').onclick=async()=>{if(!hasFeedback())return;try{await navigator.clipboard.writeText(prompt());$('export-message').textContent='Prompt copied. Paste it into Codex to apply and deploy this as the new baseline.';}catch(e){$('copy-fallback').hidden=false;$('copy-fallback').value=prompt();$('copy-fallback').select();$('export-message').textContent='Select and copy the complete prompt below, then paste it in Codex.';}};
 $('close-feedback').onclick=()=>dialog.close();
 const point=e=>{const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];};
 canvas.addEventListener('pointerdown',e=>{if(!state?.active||pointer!==null||e.button>0)return;e.preventDefault();pointer={id:e.pointerId,x:e.clientX,y:e.clientY,kind:state.view_mode?'view':'pick'};canvas.setPointerCapture(e.pointerId);});
@@ -408,6 +452,6 @@ window.addEventListener('focus',()=>send({action:'interrupt',value:document.hidd
 window.addEventListener('resize',()=>{send({action:'interrupt',value:true});requestAnimationFrame(()=>send({action:'interrupt',value:document.hidden}));});
 })();
 </script>
-<a href="./" style="position:fixed;left:12px;bottom:8px;z-index:20;background:#e5ece8;color:#203b33;padding:8px 12px;border-radius:5px;font:14px sans-serif;text-decoration:none">Photo review</a></body>
+<a href="./" style="position:fixed;left:12px;bottom:8px;z-index:26;background:#e5ece8;color:#203b33;padding:8px 12px;border-radius:5px;font:14px sans-serif;text-decoration:none">Photo review</a></body>
 </html>
 
