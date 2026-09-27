@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<title>Apartment Study</title>
 		<style>
 html, body, #canvas {
@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-2c2a1edd8b86.pck":273856},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-2c2a1edd8b86.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-bed94bf36141.pck":279520},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-bed94bf36141.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -214,54 +214,67 @@ const engine = new Engine(GODOT_CONFIG);
 }());
 		</script>
 	<style>
-#layout-tools{font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e3e7ef;position:fixed;inset:0;z-index:30;pointer-events:none;--panel:#303641;--edge:#657084;--red:#ff6b70;--green:#82db8f;--blue:#78a8ff}
+#layout-tools{font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1c2330;position:fixed;inset:0;z-index:30;pointer-events:none;--panel:#f7f7fa;--edge:#b6bdc8;--red:#b7323e;--green:#287342;--blue:#225fbe;--keyboard:0px;--vtop:0px;--vheight:100dvh}
 #layout-tools [hidden]{display:none!important}#layout-tools *{box-sizing:border-box}
-#layout-tools button,#layout-tools input{font:inherit;color:inherit;min-height:46px;border:1px solid var(--edge);border-radius:5px;background:#252b35;padding:8px 12px;touch-action:manipulation}
-#layout-tools button{cursor:pointer}#layout-tools button:disabled{opacity:.4}#layout-tools button[aria-pressed=true],#layout-tools .primary{background:#475b79;border-color:#91b7ed}
-#layout-tools :focus-visible{outline:3px solid #ffc575;outline-offset:2px}
-#edit-launch{pointer-events:auto;position:absolute;right:max(16px,env(safe-area-inset-right));top:90px}
-#edit-toolbar{pointer-events:auto;position:absolute;left:50%;transform:translateX(-50%);top:max(12px,env(safe-area-inset-top));display:flex;gap:6px;align-items:center;padding:7px;background:var(--panel);border:1px solid var(--edge);border-radius:8px;max-width:calc(100% - 20px);flex-wrap:wrap;justify-content:center;box-shadow:0 3px 16px #0006}
-#edit-toolbar strong{font-size:14px;padding:0 8px}#edit-toolbar button{white-space:nowrap}
+#layout-tools button,#layout-tools input,#layout-tools select,#layout-tools summary{font:inherit;color:inherit;min-height:46px;min-width:46px;border:1px solid transparent;border-radius:9px;background:#e9ebef;padding:9px 12px;touch-action:manipulation}
+#layout-tools button,#layout-tools summary{cursor:pointer}#layout-tools button:disabled{opacity:.4}#layout-tools button[aria-pressed=true],#layout-tools .primary{background:#0066cc;color:white}
+#layout-tools button:active,#layout-tools summary:active{filter:brightness(.88)}#layout-tools :focus-visible{outline:3px solid #0066cc;outline-offset:2px}
+#edit-launch{pointer-events:auto;position:absolute;right:max(16px,env(safe-area-inset-right));top:90px;box-shadow:0 2px 12px #0003}
+#edit-toolbar{pointer-events:auto;position:absolute;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));top:max(calc(12px + var(--vtop)),env(safe-area-inset-top));display:flex;gap:6px;align-items:center;padding:6px;background:var(--panel);border-radius:14px;width:fit-content;max-width:calc(100% - 24px);flex-wrap:wrap;box-shadow:0 2px 12px #0003}
+#edit-toolbar strong{font-size:15px;padding:0 10px}#edit-toolbar button{white-space:nowrap}#edit-done{margin-left:4px}
 #gizmo{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;pointer-events:none;touch-action:none}
 #gizmo [data-axis]{pointer-events:stroke;cursor:grab;touch-action:none}
-#transform-bar{pointer-events:auto;position:absolute;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom));max-width:calc(100% - 20px);width:620px;background:var(--panel);border:1px solid var(--edge);border-radius:8px;padding:10px 14px;box-shadow:0 3px 16px #0006}
-#selection-line{display:flex;align-items:center;justify-content:space-between;gap:8px}#selection-title{font-weight:600}#reset-object{min-height:38px!important;padding:4px 10px!important}
-#transform-fields{display:grid;grid-template-columns:90px repeat(3,minmax(0,1fr));gap:6px;align-items:center;margin-top:8px}
-#transform-fields label{display:flex;align-items:center;gap:5px;background:#252b35;border-radius:5px;padding-left:7px;font-weight:700}#transform-fields input{width:100%;min-width:0;padding:7px 4px;border:0;font-variant-numeric:tabular-nums;font-size:14px}
+#transform-bar{pointer-events:auto;position:absolute;left:max(12px,env(safe-area-inset-left));bottom:max(calc(12px + var(--keyboard)),env(safe-area-inset-bottom));max-width:calc(100% - 24px);width:440px;max-height:calc(var(--vheight) - 150px);overflow:auto;overscroll-behavior:contain;touch-action:pan-y;background:var(--panel);border-radius:14px;padding:12px;box-shadow:0 2px 12px #0003}
+#selection-line,.control-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}#selection-line{justify-content:space-between}#selection-title{font-size:18px;font-weight:600}#selection-parent{font-size:14px}
+#selection-actions{margin-top:8px}#selection-actions button{flex:1}#precision{margin-top:10px;border-top:1px solid #d6dae0;padding-top:6px}#precision summary{background:transparent;padding-left:4px;list-style:none;font-weight:600}#precision summary:after{content:"＋";float:right}#precision[open] summary:after{content:"−"}
+#transform-fields{display:grid;grid-template-columns:72px repeat(3,minmax(0,1fr));gap:6px;align-items:center;margin-top:8px;font-size:14px}
+#transform-fields label{display:flex;align-items:center;gap:4px;background:#e9ebef;border-radius:9px;padding-left:7px;font-weight:700}#transform-fields input{width:100%;min-width:0;padding:7px 2px;border:0;font-variant-numeric:tabular-nums;font-size:16px;background:transparent}
 #transform-fields label:nth-of-type(3n+1){color:var(--red)}#transform-fields label:nth-of-type(3n+2){color:var(--green)}#transform-fields label:nth-of-type(3n){color:var(--blue)}
-#edit-hint,#editor-message{font-size:13px;color:#c4cddd;margin-top:6px}#draft-notice{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:13px}#restore-draft{padding:4px 10px!important;min-height:38px!important}
+#edit-hint,#editor-message,#position-frame{font-size:14px;color:#505b6d;margin-top:7px}#draft-notice{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:14px}#view-controls,#nudge-controls{margin-top:10px}#view-controls button,#nudge-controls button{flex:1}#objects-panel{margin-top:8px}#objects-panel select{width:100%;margin-top:6px}#precision-options{justify-content:space-between;margin-top:8px;font-size:14px}#precision-options select{font-size:15px}#reset-object{margin-top:10px}#gesture-readout{position:absolute;top:100px;right:16px;background:#f7f7fa;color:#1c2330;padding:8px 12px;border-radius:10px;font-variant-numeric:tabular-nums;box-shadow:0 2px 12px #0003}
 body.layout-editing>a{display:none!important}
-#feedback-dialog{border:1px solid #657084;border-radius:10px;padding:24px;width:min(540px,calc(100% - 24px));max-height:90dvh;background:#303641;color:#e3e7ef;font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:auto;touch-action:pan-y}
-#feedback-dialog::backdrop{background:#101720aa}#feedback-dialog textarea{box-sizing:border-box;width:100%;min-height:100px;padding:12px;background:#252b35;color:white;border:1px solid #657084;border-radius:6px;font:inherit;touch-action:auto}#feedback-dialog button{min-height:48px;font:inherit;border-radius:5px;padding:10px;border:1px solid #657084;background:#475b79;color:white}#feedback-dialog .row{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}#feedback-dialog .row>*{flex:1}#feedback-dialog h2{margin-top:0}#feedback-dialog label{display:block;margin:12px 0 6px}#copy-fallback{font-size:12px!important}
-@media(max-width:650px){#edit-toolbar{width:calc(100% - 16px);gap:4px;padding:5px}#edit-toolbar strong{display:none}#edit-toolbar button{padding:7px 9px;flex:1}#transform-bar{padding:8px 10px;width:calc(100% - 16px)}#transform-fields{grid-template-columns:65px repeat(3,minmax(0,1fr));gap:4px;font-size:12px}#transform-fields input{font-size:13px}#edit-hint{font-size:12px}}
-@media(max-height:500px){#transform-bar{width:510px;padding:6px 10px}#transform-fields{margin-top:4px}#transform-fields input{min-height:36px}#edit-hint,#editor-message{display:none}}
+#feedback-dialog{border:0;border-radius:18px;padding:24px;width:min(540px,calc(100% - 24px));max-height:85dvh;background:#f7f7fa;color:#1c2330;font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:auto;touch-action:pan-y;box-shadow:0 12px 48px #0005}
+#feedback-dialog::backdrop{background:#10172088}#feedback-dialog textarea{box-sizing:border-box;width:100%;min-height:100px;padding:12px;background:white;color:#1c2330;border:1px solid #b6bdc8;border-radius:9px;font:inherit;touch-action:auto}#feedback-dialog button{min-height:48px;font:inherit;border-radius:9px;padding:10px 14px;border:0;background:#e9ebef;color:#1c2330}#feedback-dialog button.primary{background:#0066cc;color:white}#feedback-dialog button:active{filter:brightness(.88)}#feedback-dialog .row{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}#feedback-dialog .row>*{flex:1}#feedback-dialog h2{margin-top:0}#feedback-dialog label{display:block;margin:12px 0 6px}#copy-fallback{font-size:14px!important}
+@media(max-width:650px){#edit-toolbar{gap:4px;padding:5px}#edit-toolbar strong{display:none}#edit-toolbar button{padding:8px 10px;font-size:14px}#transform-bar{padding:10px}#transform-fields{grid-template-columns:65px repeat(3,minmax(0,1fr));gap:4px}#selection-title{font-size:17px}}
+@media(max-height:500px){#transform-bar{width:380px;max-height:calc(var(--vheight) - 85px)}#edit-hint{display:none}}
+@media(prefers-reduced-motion:no-preference){#layout-tools button{transition:background-color .12s,color .12s}}
+@media(prefers-contrast:more){#layout-tools{--edge:#555}#layout-tools button,#layout-tools select,#layout-tools input{border-color:#555}#transform-bar,#edit-toolbar{border:2px solid #222}}
 </style>
 <div id="layout-tools" hidden>
 <button id="edit-launch" class="primary" disabled>Edit</button>
 <svg id="gizmo" aria-label="3D transform handles" hidden></svg>
-<div id="edit-toolbar" role="toolbar" aria-label="Edit scene" hidden><strong>Paused</strong><button id="move-mode" aria-pressed="true">Move</button><button id="rotate-mode" aria-pressed="false">Rotate</button><button id="editor-undo">Undo</button><button id="editor-redo">Redo</button><button id="export-feedback">Export</button><button id="edit-done" class="primary">Done</button></div>
-<div id="transform-bar" hidden><div id="selection-line"><span id="selection-title">Tap an object in the room.</span><button id="reset-object" hidden>Reset</button></div>
-<div id="transform-fields" hidden><span>Position m</span><label>X<input id="position-0" type="number" step="0.0254" aria-label="Position X in meters"></label><label>Y<input id="position-1" type="number" step="0.0254" aria-label="Position Y in meters"></label><label>Z<input id="position-2" type="number" step="0.0254" aria-label="Position Z in meters"></label><span>Rotation °</span><label>X<input id="rotation-0" type="number" step="1" aria-label="Rotation X in degrees"></label><label>Y<input id="rotation-1" type="number" step="1" aria-label="Rotation Y in degrees"></label><label>Z<input id="rotation-2" type="number" step="1" aria-label="Rotation Z in degrees"></label></div>
-<div id="edit-hint">The game is paused. Tap a furnishing to select it.</div><div id="draft-notice" hidden><span>Saved layout available.</span><button id="restore-draft">Restore draft</button></div><div id="editor-message" role="status" aria-live="polite"></div></div>
+<div id="edit-toolbar" role="toolbar" aria-label="Edit scene" hidden><strong>Editing · paused</strong><button id="move-mode" aria-pressed="true">Move</button><button id="rotate-mode" aria-pressed="false">Rotate</button><button id="view-mode" aria-pressed="false">View</button><button id="editor-undo" aria-label="Undo">↶</button><button id="editor-redo" aria-label="Redo">↷</button><button id="export-feedback">Export</button><button id="edit-done" class="primary">Done</button></div>
+<div id="gesture-readout" hidden></div>
+<div id="transform-bar" hidden>
+<div id="selection-line"><span id="selection-title">Tap an object.</span><button id="selection-parent" hidden>Select group</button></div>
+<div id="selection-actions" class="control-row"><button id="objects-toggle" aria-expanded="false">Objects</button><button id="focus-object" hidden>Focus</button></div>
+<div id="objects-panel" hidden><label for="object-list">Select an object or group</label><select id="object-list"><option value="">Choose an object…</option></select></div>
+<div id="view-controls" hidden><div class="control-row"><button data-view="0,0,-0.3">Forward</button><button data-view="0,0,0.3">Back</button><button id="view-reset">Player view</button></div><div class="control-row"><button data-view="-0.3,0,0">Left</button><button data-view="0.3,0,0">Right</button><button data-view="0,0.3,0">Up</button><button data-view="0,-0.3,0">Down</button></div></div>
+<details id="precision" hidden><summary>Precision</summary>
+<div id="precision-options" class="control-row"><label>Units <select id="units"><option value="in">Inches</option><option value="m">Meters</option></select></label><label>Snap <select id="snap-size"><option value="0.00254">0.1″ / 1°</option><option value="0.003175">⅛″ / 1°</option><option value="0.0254">1″ / 15°</option><option value="0">Off</option></select></label></div>
+<div id="position-frame"></div>
+<div id="transform-fields" hidden><span id="position-label">Position in</span><label>X<input id="position-0" type="number" step="0.1" aria-label="Position X"></label><label>Y<input id="position-1" type="number" step="0.1" aria-label="Position Y"></label><label>Z<input id="position-2" type="number" step="0.1" aria-label="Position Z"></label><span>Rotation °</span><label>X<input id="rotation-0" type="number" step="1" aria-label="Rotation X in degrees"></label><label>Y<input id="rotation-1" type="number" step="1" aria-label="Rotation Y in degrees"></label><label>Z<input id="rotation-2" type="number" step="1" aria-label="Rotation Z in degrees"></label></div>
+<div id="nudge-controls" class="control-row"><label>Axis <select id="nudge-axis"><option value="0">X · east/west</option><option value="1">Y · up/down</option><option value="2">Z · south/north</option></select></label><button id="nudge-minus" aria-label="Move negative along selected axis">−</button><button id="nudge-plus" aria-label="Move positive along selected axis">＋</button></div>
+<button id="reset-object" hidden>Reset selected object</button></details>
+<div id="edit-hint">Tap an object to select it. The game is paused.</div><div id="draft-notice" hidden><span>Saved layout available.</span><button id="restore-draft">Restore draft</button></div><div id="editor-message" role="status" aria-live="polite"></div></div>
 </div>
-<dialog id="feedback-dialog" aria-labelledby="feedback-title"><h2 id="feedback-title">Send this layout back.</h2><p>Save or share the feedback file, then attach it in Codex and say “Use $reference-to-scene to apply this layout feedback.” Nothing is sent automatically.</p><ul id="feedback-summary"></ul><label for="feedback-note">Anything else to change?</label><textarea id="feedback-note" maxlength="4000" placeholder="For example: this is the right spot for the TV."></textarea><div class="row"><button id="save-feedback" class="primary">Save file</button><button id="share-feedback">Share file</button><button id="copy-feedback">Copy feedback</button></div><p id="export-message" role="status" aria-live="polite"></p><textarea id="copy-fallback" aria-label="Feedback text to copy" readonly hidden></textarea><button id="close-feedback">Back to editor</button></dialog>
+<dialog id="feedback-dialog" aria-labelledby="feedback-title"><h2 id="feedback-title">Export your changes</h2><p>Save or share the file, then attach it in Codex. Ask the agent to apply this layout feedback. You can also describe a door or wall correction below.</p><ul id="feedback-summary"></ul><label for="feedback-note">Anything else to change?</label><textarea id="feedback-note" maxlength="4000" placeholder="For example: move Entrance 6 inches west, including the opening."></textarea><div class="row"><button id="save-feedback" class="primary">Save file</button><button id="share-feedback">Share file</button><button id="copy-feedback">Copy feedback</button></div><p id="export-message" role="status" aria-live="polite"></p><textarea id="copy-fallback" aria-label="Feedback text to copy" readonly hidden></textarea><button id="close-feedback">Back to editor</button></dialog>
 <script>
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('canvas'), svg=$('gizmo'), dialog=$('feedback-dialog');
-let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true;
-const revision='2c2a1edd8b86025537699873ccb6c2b9a12e5908', colors=['#ff6b70','#82db8f','#78a8ff'];
+let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false;
+const revision='bed94bf36141c256b8db86e6fdf51c6c01e11e8b', colors=['#ff6b70','#82db8f','#78a8ff'];
 const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),rotation_degrees:t.rotation_degrees.map(n=>+n.toFixed(5))});
 const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||a.rotation_degrees.some((n,i)=>Math.abs(n-b.rotation_degrees[i])>0.0001);
 function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:o.label,before:clean(o),after:clean(state.values[o.id])}));}
-function key(){return 'apartment-editor-v2:'+state.baseline.base_layout_hash;}
+function key(){return 'apartment-editor-v3:'+state.baseline.base_layout_hash;}
 function send(command){if(callback)callback(JSON.stringify(command));}
 function saveDraft(){if(!hadInitial)return;try{localStorage.setItem(key(),JSON.stringify({values:state.values,note:$('feedback-note').value}));}catch(e){storageOK=false;}}
 function node(name,attrs){const el=document.createElementNS('http://www.w3.org/2000/svg',name);for(const [k,v]of Object.entries(attrs))el.setAttribute(k,v);return el;}
 function drawGizmo(){
  svg.replaceChildren();const g=state.gizmo;if(!g?.center)return;
  svg.setAttribute('viewBox',`0 0 ${g.viewport[0]} ${g.viewport[1]}`);
- for(const [a,b]of g.edges)svg.append(node('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'#ffd098','stroke-width':1.4,'stroke-opacity':.8}));
+ for(const [a,b]of g.edges)svg.append(node('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'#ffd098','stroke-width':1.4,'stroke-opacity':.95}));
  g.axes.forEach((axis,i)=>{
   let d;
   if(state.mode==='move'){
@@ -274,8 +287,8 @@ function drawGizmo(){
    const label=node('text',{x:end[0]+8,y:end[1]-8,fill:colors[i],'font-size':16,'font-weight':700,'paint-order':'stroke',stroke:'#10151f','stroke-width':3});label.textContent='XYZ'[i];svg.append(label);
   }else d=axis.ring.map((p,j)=>(j?'L':'M')+p.join(',')).join(' ');
   svg.append(node('path',{d,fill:'none',stroke:'#151a25','stroke-width':7,'stroke-linecap':'round'}));
-  svg.append(node('path',{d,fill:'none',stroke:colors[i],'stroke-width':4,'stroke-linecap':'round'}));
-  svg.append(node('path',{d,fill:'none',stroke:'transparent','stroke-width':28,'data-axis':i,'aria-label':`${state.mode} ${'XYZ'[i]} axis`}));
+  svg.append(node('path',{d,fill:'none',stroke:colors[i],'stroke-width':pointer?.axis===i?7:4,'stroke-linecap':'round'}));
+  svg.append(node('path',{d,fill:'none',stroke:'transparent','stroke-width':40,'data-axis':i,'aria-label':`${state.mode} ${'XYZ'[i]} axis`}));
  });
 }
 function cssGizmo(g){
@@ -287,49 +300,69 @@ function receive(text){
  const previous=state?JSON.stringify(state.values):null;state=JSON.parse(text);cssGizmo(state.gizmo);
  if(!hadInitial){
   try{draft=JSON.parse(localStorage.getItem(key()));
-   if(!draft&&state.baseline.legacy_hash){const old=JSON.parse(localStorage.getItem('apartment-editor-v1:'+state.baseline.legacy_hash));if(old){draft={note:old.note,values:Object.fromEntries(Object.entries(old.values).map(([k,v])=>[k,{position_m:v.position_m,rotation_degrees:[0,v.yaw_degrees,0]}]))};}}
+   if(!draft&&state.baseline.v2_hash){const old=JSON.parse(localStorage.getItem('apartment-editor-v2:'+state.baseline.v2_hash));if(old)draft={note:old.note,values:{...state.values,...old.values}};}
+   if(!draft&&state.baseline.legacy_hash){const old=JSON.parse(localStorage.getItem('apartment-editor-v1:'+state.baseline.legacy_hash));if(old){draft={note:old.note,values:{...state.values,...Object.fromEntries(Object.entries(old.values).map(([k,v])=>[k,{position_m:v.position_m,rotation_degrees:[0,v.yaw_degrees,0]}]))}};}}
   }catch(e){storageOK=false;}
   hadInitial=true;$('draft-notice').hidden=!draft;
- }else if(state.active&&JSON.stringify(state.values)!==previous)saveDraft();
+ }else if(state.active){if(JSON.stringify(state.values)!==previous)draftDirty=true;if(draftDirty&&!pointer){saveDraft();draftDirty=false;}}
  $('layout-tools').hidden=false;$('edit-launch').disabled=false;$('edit-launch').hidden=state.active;
  for(const id of ['edit-toolbar','transform-bar','gizmo'])$(id).toggleAttribute('hidden',!state.active);
  document.body.classList.toggle('layout-editing',state.active);
  $('move-mode').setAttribute('aria-pressed',state.mode==='move');$('rotate-mode').setAttribute('aria-pressed',state.mode==='rotate');
  $('editor-undo').disabled=!state.can_undo;$('editor-redo').disabled=!state.can_redo;
+ $('editor-undo').setAttribute('aria-label','Undo '+state.undo_label);$('editor-undo').title='Undo '+state.undo_label;$('editor-redo').setAttribute('aria-label','Redo '+state.redo_label);
+ $('view-mode').setAttribute('aria-pressed',state.view_mode);$('view-controls').hidden=!state.view_mode;
+ if(!objectsReady){for(const o of state.baseline.objects){const option=document.createElement('option');option.value=o.id;option.textContent=o.label+(o.group?' (group)':'');$('object-list').append(option);}objectsReady=true;}
+ $('object-list').value=state.selected;
  const selected=state.baseline.objects.find(o=>o.id===state.selected);
  $('selection-title').textContent=selected?selected.label:'Tap an object in the room.';
- $('transform-fields').hidden=!selected;$('reset-object').hidden=!selected;
- if(selected){for(const [name,field]of [['position','position_m'],['rotation','rotation_degrees']])for(let i=0;i<3;i++){const input=$(name+'-'+i);if(document.activeElement!==input)input.value=+state.values[state.selected][field][i].toFixed(name==='position'?4:2);}}
- $('edit-hint').textContent=selected?(state.mode==='move'?'Drag an axis arrow. X east · Y up · Z south.':'Drag a colored ring. World axes · center pivot.'):'The game is paused. Tap a furnishing to select it.';
- const n=changes().length;$('export-feedback').disabled=n===0;
- $('editor-message').textContent=state.error||(storageOK?(n?`${n} changed · draft saved here`:''):'Storage unavailable. Export before leaving.');
+ $('transform-fields').hidden=!selected;$('reset-object').hidden=!selected;$('precision').hidden=!selected||state.view_mode;$('focus-object').hidden=!selected;
+ $('selection-parent').hidden=!selected?.parent;if(selected?.parent)$('selection-parent').textContent=state.baseline.objects.find(o=>o.id===selected.parent).label+' ↑';
+ $('position-frame').textContent=selected?.parent?'Position within the group. Arrows move along world axes.':'World position · X east · Y up · Z south';
+ $('position-label').textContent='Position '+units;
+ if(selected){for(const [name,field]of [['position','position_m'],['rotation','rotation_degrees']])for(let i=0;i<3;i++){const input=$(name+'-'+i);if(document.activeElement!==input)input.value=+(state.values[state.selected][field][i]/(name==='position'&&units==='in'?.0254:1)).toFixed(name==='position'?4:2);if(name==='position'){input.step=units==='in'?.1:.00254;input.setAttribute('aria-label','Position '+'XYZ'[i]+' in '+(units==='in'?'inches':'meters'));}}}
+ $('edit-hint').textContent=state.view_mode?'Drag the scene to look. Use buttons to move. Done returns to your player view.':selected?(state.mode==='move'?'Drag an axis arrow. X east · Y up · Z south.':'Drag a colored ring. World axes · center pivot.'):'The game is paused. Tap a furnishing to select it.';
+ const n=changes().length;$('export-feedback').disabled=false;
+ const status=state.error||(storageOK?(n?(pointer?.kind==='gizmo'?'Adjusting…':`${n} changed · saved on this device`):''):'Storage unavailable. Export before leaving.');if($('editor-message').textContent!==status)$('editor-message').textContent=status;
  if(state.error&&!state.active)$('edit-launch').title=state.error;
+ $('gesture-readout').hidden=!pointer||pointer.kind!=='gizmo';
+ if(pointer?.kind==='gizmo'&&selected){const axis=pointer.axis;const delta=state.drag_delta;$('gesture-readout').textContent=selected.label+' · '+(state.mode==='move'?(delta/.0254).toFixed(2)+'″':delta.toFixed(1)+'°');}
  drawGizmo();window.dispatchEvent(new Event('apartment-editor-state'));
 }
-window.apartmentEditor={getCanvasHeight(){return canvas.getBoundingClientRect().height;},connectGame(fn){callback=fn;},disconnectGame(){callback=null;$('layout-tools').hidden=true;document.body.classList.remove('layout-editing');hadInitial=false;},receive,getState(){return state;},requestState(){send({action:'state'});}};
+window.apartmentEditor={getCanvasHeight(){return canvas.getBoundingClientRect().height;},connectGame(fn){callback=fn;},disconnectGame(){callback=null;$('layout-tools').hidden=true;document.body.classList.remove('layout-editing');hadInitial=false;objectsReady=false;},receive,getState(){return state;},requestState(){send({action:'state'});}};
 $('edit-launch').onclick=()=>send({action:'open'});
 $('edit-done').onclick=()=>{send({action:'close'});canvas.focus({preventScroll:true});};
-$('move-mode').onclick=()=>send({action:'mode',mode:'move'});$('rotate-mode').onclick=()=>send({action:'mode',mode:'rotate'});
+$('move-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'move'});};$('rotate-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'rotate'});};
+ $('view-mode').onclick=()=>send({action:'view_mode',value:!state.view_mode});$('view-reset').onclick=()=>send({action:'view_reset'});
+ $('focus-object').onclick=()=>send({action:'focus'});$('selection-parent').onclick=()=>send({action:'select',id:state.baseline.objects.find(o=>o.id===state.selected).parent});
+ $('objects-toggle').onclick=()=>{const visible=$('objects-panel').hidden;$('objects-panel').hidden=!visible;$('objects-toggle').setAttribute('aria-expanded',visible);};
+ $('object-list').onchange=e=>{if(e.target.value)send({action:'select',id:e.target.value});};
+ document.querySelectorAll('[data-view]').forEach(el=>el.onclick=()=>{const [x,y,z]=el.dataset.view.split(',').map(Number);send({action:'view_step',x,y,z});});
+ $('units').onchange=e=>{units=e.target.value;send({action:'state'});};
+ $('snap-size').onchange=e=>send({action:'snap',move:+e.target.value,rotate:+e.target.value===.0254?15:+e.target.value===0?0:1});
+ for(const [id,sign]of [['nudge-minus',-1],['nudge-plus',1]])$(id).onclick=()=>send({action:'nudge',axis:+$('nudge-axis').value,amount:sign*(state.mode==='move'?(state.snap_move||.00254):(state.snap_rotate||1)*Math.PI/180)});
 $('editor-undo').onclick=()=>send({action:'undo'});$('editor-redo').onclick=()=>send({action:'redo'});$('reset-object').onclick=()=>send({action:'reset'});
-for(const name of ['position','rotation'])for(let i=0;i<3;i++)$(name+'-'+i).onchange=e=>{const value=Number(e.target.value);if(!Number.isFinite(value)||e.target.value===''){e.target.blur();send({action:'state'});return;}const transform=structuredClone(state.values[state.selected]);transform[name==='position'?'position_m':'rotation_degrees'][i]=value;e.target.blur();send({action:'transform',value:transform});};
+for(const name of ['position','rotation'])for(let i=0;i<3;i++)$(name+'-'+i).onchange=e=>{const value=Number(e.target.value);if(!Number.isFinite(value)||e.target.value===''){e.target.blur();send({action:'state'});return;}const transform=structuredClone(state.values[state.selected]);transform[name==='position'?'position_m':'rotation_degrees'][i]=value*(name==='position'&&units==='in'?.0254:1);e.target.blur();send({action:'transform',value:transform});};
 $('restore-draft').onclick=()=>{if(draft){send({action:'restore',values:draft.values});$('feedback-note').value=String(draft.note||'');$('draft-notice').hidden=true;saveDraft();}};
 $('feedback-note').oninput=saveDraft;
-function payload(){return {schema:'apartment-feedback/v2',project:'apartment-study',source_revision:revision,base_layout_hash:state.baseline.base_layout_hash,created_at:new Date().toISOString(),coordinates:{units:'meters',north:'-Z',east:'+X',up:'+Y',rotation:'Godot Euler YXZ, degrees'},changes:changes(),note:$('feedback-note').value};}
-function text(){return JSON.stringify(payload(),null,2)+'\n';}function filename(){return 'apartment-feedback-'+new Date().toISOString().slice(0,10)+'.json';}
+function payload(){return {schema:'apartment-feedback/v3',project:'apartment-study',source_revision:revision,base_layout_hash:state.baseline.base_layout_hash,created_at:new Date().toISOString(),coordinates:{units:'meters',north:'-Z',east:'+X',up:'+Y',rotation:'Godot Euler YXZ, degrees',frame:'parent-local; roots are world',parents:Object.fromEntries(state.baseline.objects.map(o=>[o.id,o.parent]))},changes:changes(),note:$('feedback-note').value};}
+function text(){return JSON.stringify(payload(),null,2)+'\n';}function hasFeedback(){if(changes().length||$('feedback-note').value.trim())return true;$('export-message').textContent='Move an object or add a correction before exporting.';$('feedback-note').focus();return false;}function filename(){return 'apartment-feedback-'+new Date().toISOString().slice(0,10)+'.json';}
 $('export-feedback').onclick=()=>{$('feedback-summary').replaceChildren(...changes().map(c=>{const li=document.createElement('li');li.textContent=c.label;return li;}));$('export-message').textContent='';$('copy-fallback').hidden=true;$('share-feedback').hidden=!(navigator.canShare&&navigator.canShare({files:[new File(['{}'],'feedback.json',{type:'application/json'})]}));dialog.showModal();};
-$('save-feedback').onclick=()=>{const url=URL.createObjectURL(new Blob([text()],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=filename();a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);$('export-message').textContent='File download requested. Attach it in your Codex conversation.';};
-$('share-feedback').onclick=async()=>{try{await navigator.share({files:[new File([text()],filename(),{type:'application/json'})],title:'Apartment layout feedback'});$('export-message').textContent='Share sheet closed.';}catch(e){$('export-message').textContent=e.name==='AbortError'?'Share cancelled. Your draft is still here.':'Sharing unavailable. Use Save file or Copy feedback.';}};
-$('copy-feedback').onclick=async()=>{try{await navigator.clipboard.writeText(text());$('export-message').textContent='Copied. Paste into Codex with “Use $reference-to-scene to apply this layout feedback.”';}catch(e){$('copy-fallback').hidden=false;$('copy-fallback').value=text();$('copy-fallback').select();$('export-message').textContent='Select and copy the text below, then paste it in Codex.';}};
+$('save-feedback').onclick=()=>{if(!hasFeedback())return;const url=URL.createObjectURL(new Blob([text()],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=filename();a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);$('export-message').textContent='File download requested. Attach it in your Codex conversation.';};
+$('share-feedback').onclick=async()=>{if(!hasFeedback())return;try{await navigator.share({files:[new File([text()],filename(),{type:'application/json'})],title:'Apartment layout feedback'});$('export-message').textContent='Share sheet closed.';}catch(e){$('export-message').textContent=e.name==='AbortError'?'Share cancelled. Your draft is still here.':'Sharing unavailable. Use Save file or Copy feedback.';}};
+$('copy-feedback').onclick=async()=>{if(!hasFeedback())return;try{await navigator.clipboard.writeText(text());$('export-message').textContent='Copied. Paste into Codex with “Use $reference-to-scene to apply this layout feedback.”';}catch(e){$('copy-fallback').hidden=false;$('copy-fallback').value=text();$('copy-fallback').select();$('export-message').textContent='Select and copy the text below, then paste it in Codex.';}};
 $('close-feedback').onclick=()=>dialog.close();
 const point=e=>{const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];};
-canvas.addEventListener('pointerdown',e=>{if(!state?.active||pointer!==null||e.button>0)return;e.preventDefault();pointer={id:e.pointerId,x:e.clientX,y:e.clientY,kind:'pick'};canvas.setPointerCapture(e.pointerId);});
-svg.addEventListener('pointerdown',e=>{const target=e.target.closest('[data-axis]');if(!state?.active||!target||pointer!==null||e.button>0)return;e.preventDefault();pointer={id:e.pointerId,kind:'gizmo'};svg.setPointerCapture(e.pointerId);send({action:'drag_start',axis:+target.dataset.axis,point:point(e)});});
-function move(e){if(pointer?.id!==e.pointerId)return;e.preventDefault();if(pointer.kind==='gizmo')send({action:'drag',point:point(e)});}
-function end(e,cancel=false){if(pointer?.id!==e.pointerId)return;const last=pointer;pointer=null;if(last.kind==='gizmo')send({action:cancel?'drag_cancel':'drag_end'});else if(!cancel&&Math.hypot(e.clientX-last.x,e.clientY-last.y)<12)send({action:'pick',point:point(e)});}
+canvas.addEventListener('pointerdown',e=>{if(!state?.active||pointer!==null||e.button>0)return;e.preventDefault();pointer={id:e.pointerId,x:e.clientX,y:e.clientY,kind:state.view_mode?'view':'pick'};canvas.setPointerCapture(e.pointerId);});
+svg.addEventListener('pointerdown',e=>{const target=e.target.closest('[data-axis]');if(!state?.active||!target||pointer!==null||e.button>0)return;e.preventDefault();pointer={id:e.pointerId,kind:'gizmo',axis:+target.dataset.axis,before:[...state.values[state.selected][state.mode==='move'?'position_m':'rotation_degrees']]};svg.setPointerCapture(e.pointerId);send({action:'drag_start',axis:+target.dataset.axis,point:point(e)});});
+function move(e){if(pointer?.id!==e.pointerId)return;e.preventDefault();if(pointer.kind==='gizmo')send({action:'drag',point:point(e)});else if(pointer.kind==='view'){send({action:'view_look',x:(e.clientX-pointer.x)/canvas.clientWidth,y:(e.clientY-pointer.y)/canvas.clientHeight});pointer.x=e.clientX;pointer.y=e.clientY;}}
+function end(e,cancel=false){if(pointer?.id!==e.pointerId)return;const last=pointer;pointer=null;if(last.kind==='gizmo')send({action:cancel?'drag_cancel':'drag_end'});else if(last.kind==='pick'&&!cancel&&Math.hypot(e.clientX-last.x,e.clientY-last.y)<12)send({action:'pick',point:point(e)});}
 for(const el of [canvas,svg]){el.addEventListener('pointermove',move);el.addEventListener('pointerup',e=>end(e));el.addEventListener('pointercancel',e=>end(e,true));el.addEventListener('lostpointercapture',e=>end(e,true));}
 window.addEventListener('blur',()=>{if(pointer){pointer=null;send({action:'drag_cancel'});}});
-window.addEventListener('resize',()=>setTimeout(()=>send({action:'state'}),150));
-window.addEventListener('beforeunload',e=>{if(state&&changes().length){e.preventDefault();e.returnValue='';}});
+function viewport(){const v=window.visualViewport;$('layout-tools').style.setProperty('--keyboard',Math.max(0,innerHeight-(v?.height||innerHeight)-(v?.offsetTop||0))+'px');$('layout-tools').style.setProperty('--vtop',(v?.offsetTop||0)+'px');$('layout-tools').style.setProperty('--vheight',(v?.height||innerHeight)+'px');setTimeout(()=>send({action:'state'}),100);}
+ window.addEventListener('resize',viewport);window.visualViewport?.addEventListener('resize',viewport);window.visualViewport?.addEventListener('scroll',viewport);
+ document.addEventListener('keydown',e=>{if(!state?.active||/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName))return;if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();send({action:e.shiftKey?'redo':'undo'});}if(e.key==='Escape'){send({action:'drag_cancel'});}});
+window.addEventListener('beforeunload',e=>{if(state&&(changes().length||$('feedback-note').value.trim())){e.preventDefault();e.returnValue='';}});
 })();
 </script>
 <a href="./" style="position:fixed;left:12px;bottom:8px;z-index:20;background:#e5ece8;color:#203b33;padding:8px 12px;border-radius:5px;font:14px sans-serif;text-decoration:none">Photo review</a></body>
