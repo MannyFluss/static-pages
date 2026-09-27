@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-c455b4dea8d8.pck":324284},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-c455b4dea8d8.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-f491d5477f95.pck":328364},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-f491d5477f95.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -249,7 +249,7 @@ function local(e){const r=surface.getBoundingClientRect();return {point:[e.clien
 function release(el,id){try{if(el.hasPointerCapture(id))el.releasePointerCapture(id);}catch{counts.captureErrors++;}}
 function clear(notify=true,reason='game-state'){lastClear=reason;const active=[...contacts.keys()],buttons=[...held.entries()];contacts.clear();held.clear();if(!nativeTouch)for(const id of active)release(surface,id);for(const [id,el]of buttons){el.dataset.held='false';release(el,id);}pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';if(notify)send({action:'clear'});}
 function receive(text){state=JSON.parse(text);root.hidden=state.blocked;$('touch-scene').hidden=!state.has_modes;$('touch-scene').textContent=state.portal?'Building':'Portal study';if(state.blocked||state.paused)clear(false);$('touch-pause').textContent=state.paused?'Resume':'Pause';$('touch-steer').textContent=state.steer?'Steer':'Strafe';$('touch-steer').setAttribute('aria-label',state.steer?'Movement mode: steer. Tap for strafe.':'Movement mode: strafe. Tap for one-finger steering.');$('touch-help').textContent=state.paused?'Paused · tap Resume':state.steer?'Left: walk + turn · Right: look':'Left: move · Right: look';const move=[...contacts.values()].find(p=>p.gameId===state.move_id);if(move){pad.style.left=(move.start[0]-62)+'px';pad.style.top=(move.start[1]-62)+'px';pad.style.bottom='auto';thumb.style.transform=`translate(${state.movement[0]*62}px,${state.movement[1]*62}px)`;}else{pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';}}
-function report(){return {schema:'apartment-input-report/v1',revision:'c455b4dea8d8c4c6b9468ca15fdd0830d9f57dca',browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints,inputPath:nativeTouch?'touch-events':'pointer-events',viewport:[innerWidth,innerHeight],visible:!document.hidden,documentFocused:document.hasFocus(),activeElement:document.activeElement?.id||document.activeElement?.tagName,connected:!!callback,state,counts:{...counts},lastClear,lastStart,lastMove};}
+function report(){return {schema:'apartment-input-report/v1',revision:'f491d5477f9570e8ef3990b7bb32feecae7f8218',browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints,inputPath:nativeTouch?'touch-events':'pointer-events',viewport:[innerWidth,innerHeight],visible:!document.hidden,documentFocused:document.hasFocus(),activeElement:document.activeElement?.id||document.activeElement?.tagName,connected:!!callback,state,counts:{...counts},lastClear,lastStart,lastMove};}
 window.apartmentTouch={connectGame(fn){callback=fn;send({action:'state'});},disconnectGame(){clear(false,'disconnect');callback=null;state=null;root.hidden=true;},receive,getState(){return state;},getReport:report,requestState(){send({action:'state'});}};
 // Browser IDs may be negative, including -1. Keep them only as opaque Map keys;
 // Godot reserves -1 for "no contact", so allocate separate nonnegative slot IDs.
@@ -283,6 +283,7 @@ window.addEventListener('apartment-editor-state',()=>{if(window.apartmentEditor?
 #edit-toolbar{pointer-events:auto;position:absolute;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));top:max(calc(12px + var(--vtop)),env(safe-area-inset-top));display:flex;gap:6px;align-items:center;padding:6px;background:var(--panel);border-radius:14px;width:fit-content;max-width:calc(100% - 24px);flex-wrap:wrap;box-shadow:0 2px 12px #0003}
 #edit-toolbar strong{font-size:15px;padding:0 10px}#edit-toolbar button{white-space:nowrap}#edit-done{margin-left:4px}
 #gizmo{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;pointer-events:none;touch-action:none}
+#gizmo [data-plane]{pointer-events:all;cursor:grab;touch-action:none}
 #gizmo [data-axis]{pointer-events:stroke;cursor:grab;touch-action:none}
 #transform-bar{pointer-events:auto;position:absolute;left:max(12px,env(safe-area-inset-left));bottom:max(calc(12px + var(--keyboard)),env(safe-area-inset-bottom));max-width:calc(100% - 24px);width:440px;max-height:calc(var(--vheight) - 150px);overflow:auto;overscroll-behavior:contain;touch-action:pan-y;background:var(--panel);border-radius:14px;padding:12px;box-shadow:0 2px 12px #0003}
 #selection-line,.control-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}#selection-line{justify-content:space-between}#selection-title{font-size:18px;font-weight:600}#selection-parent{font-size:14px}
@@ -309,7 +310,8 @@ body.layout-editing>a{display:none!important}
 <div id="selection-actions" class="control-row"><button id="objects-toggle" aria-expanded="false">Objects</button><button id="parts-toggle" hidden>Parts</button><button id="focus-object" hidden>Focus</button></div>
 <div id="parts-panel" hidden><div class="control-row"><label for="parts-list" id="parts-label">Parts</label><button id="scope-root">Whole room</button></div><select id="parts-list" aria-label="Select a part" style="width:100%"></select></div>
 <div id="objects-panel" hidden><label for="object-list">Select an object or group</label><select id="object-list"><option value="">Choose an object…</option></select></div>
-<div id="view-controls" hidden><div class="control-row"><button data-view="0,0,-0.3">Forward</button><button data-view="0,0,0.3">Back</button><button id="view-reset">Player view</button></div><div class="control-row"><button data-view="-0.3,0,0">Left</button><button data-view="0.3,0,0">Right</button><button data-view="0,0.3,0">Up</button><button data-view="0,-0.3,0">Down</button></div></div>
+<div class="control-row" id="camera-gestures" aria-label="Two-finger drag"><span>Two fingers</span><button id="camera-pan" aria-pressed="true">Pan</button><button id="camera-orbit" aria-pressed="false">Orbit</button></div>
+<div id="view-controls" hidden><div class="control-row"><button data-view="0,0,-0.3">Forward</button><button data-view="0,0,0.3">Back</button><button id="view-reset">Player view</button></div><div class="control-row"><button id="zoom-in">Zoom in</button><button id="zoom-out">Zoom out</button></div><div class="control-row"><button data-view="-0.3,0,0">Left</button><button data-view="0.3,0,0">Right</button><button data-view="0,0.3,0">Up</button><button data-view="0,-0.3,0">Down</button></div></div>
 <details id="precision" hidden><summary>Precision</summary>
 <div id="precision-options" class="control-row"><label>Units <select id="units"><option value="in">Inches</option><option value="m">Meters</option></select></label><label>Snap <select id="snap-size"><option value="0.00254">0.1″ / 1°</option><option value="0.003175">⅛″ / 1°</option><option value="0.0254">1″ / 15°</option><option value="0">Off</option></select></label></div>
 <div id="position-frame"></div>
@@ -324,7 +326,8 @@ body.layout-editing>a{display:none!important}
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('canvas'), svg=$('gizmo'), dialog=$('feedback-dialog');
 let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false,partsScope=null;
-const revision='c455b4dea8d8c4c6b9468ca15fdd0830d9f57dca', colors=['#ff6b70','#82db8f','#78a8ff'];
+const contacts=new Map(),nativeTouch='ontouchstart' in window;
+const revision='f491d5477f9570e8ef3990b7bb32feecae7f8218', colors=['#ff6b70','#82db8f','#78a8ff'];
 const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),rotation_degrees:t.rotation_degrees.map(n=>+n.toFixed(5))});
 const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||a.rotation_degrees.some((n,i)=>Math.abs(n-b.rotation_degrees[i])>0.0001);
 function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:(o.parent?state.baseline.objects.find(p=>p.id===o.parent).label+' › ':'')+o.label,before:clean(o),after:clean(state.values[o.id])}));}
@@ -333,6 +336,9 @@ function send(command){if(callback)callback(JSON.stringify(command));}
 function saveDraft(){if(!hadInitial)return;try{localStorage.setItem(key(),JSON.stringify({values:state.values,note:$('feedback-note').value}));}catch(e){storageOK=false;}}
 function node(name,attrs){const el=document.createElementNS('http://www.w3.org/2000/svg',name);for(const [k,v]of Object.entries(attrs))el.setAttribute(k,v);return el;}
 function drawGizmo(){
+ svg.style.opacity=pointer?.kind==='camera'?'0':'1';
+ // Keep the original DOM touch target attached until every finger lifts.
+ if(contacts.size)return;
  svg.replaceChildren();const g=state.gizmo;if(!g?.center)return;
  svg.setAttribute('viewBox',`0 0 ${g.viewport[0]} ${g.viewport[1]}`);
  for(const [a,b]of g.edges)svg.append(node('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'#ffd098','stroke-width':1.4,'stroke-opacity':.95}));
@@ -351,11 +357,17 @@ function drawGizmo(){
   svg.append(node('path',{d,fill:'none',stroke:colors[i],'stroke-width':pointer?.axis===i?7:4,'stroke-linecap':'round'}));
   svg.append(node('path',{d,fill:'none',stroke:'transparent','stroke-width':40,'data-axis':i,'aria-label':`${state.mode} ${'XYZ'[i]} axis`}));
  });
+ if(state.mode==='move')for(const plane of g.planes||[]){
+  const points=plane.points.map(p=>p.join(',')).join(' '),name=['YZ','XZ','XY'][plane.normal];
+  svg.append(node('polygon',{points,fill:colors[plane.normal],'fill-opacity':pointer?.plane===plane.normal?.65:.3,stroke:colors[plane.normal],'stroke-width':2,'data-plane':plane.normal,'aria-label':`Move on ${name} plane`}));
+  const center=plane.points.reduce((a,p)=>[a[0]+p[0]/4,a[1]+p[1]/4],[0,0]);
+  const label=node('text',{x:center[0],y:center[1]+4,'text-anchor':'middle',fill:'#fff','font-size':12,'font-weight':700,'paint-order':'stroke',stroke:'#10151f','stroke-width':2});label.textContent=name;svg.append(label);
+ }
 }
 function cssGizmo(g){
  if(!g?.viewport)return;
  const r=canvas.getBoundingClientRect(),sx=r.width/g.viewport[0],sy=r.height/g.viewport[1],point=p=>[p[0]*sx,p[1]*sy];
- g.center=point(g.center);g.axes.forEach(a=>{a.end=point(a.end);a.ring=a.ring.map(point);});g.edges=g.edges.map(e=>e.map(point));g.viewport=[r.width,r.height];
+ g.center=point(g.center);g.axes.forEach(a=>{a.end=point(a.end);a.ring=a.ring.map(point);});g.edges=g.edges.map(e=>e.map(point));(g.planes||[]).forEach(p=>p.points=p.points.map(point));g.viewport=[r.width,r.height];
 }
 function receive(text){
  const previous=state?JSON.stringify(state.values):null;state=JSON.parse(text);cssGizmo(state.gizmo);
@@ -373,6 +385,7 @@ function receive(text){
  $('move-mode').setAttribute('aria-pressed',state.mode==='move');$('rotate-mode').setAttribute('aria-pressed',state.mode==='rotate');
  $('editor-undo').disabled=!state.can_undo;$('editor-redo').disabled=!state.can_redo;
  $('editor-undo').setAttribute('aria-label','Undo '+state.undo_label);$('editor-undo').title='Undo '+state.undo_label;$('editor-redo').setAttribute('aria-label','Redo '+state.redo_label);
+ for(const mode of ['pan','orbit'])$('camera-'+mode).setAttribute('aria-pressed',state.navigation_mode===mode);
  $('view-mode').setAttribute('aria-pressed',state.view_mode);$('view-controls').hidden=!state.view_mode;
  if(!objectsReady){for(const o of state.baseline.objects){const option=document.createElement('option');option.value=o.id;option.textContent=(o.parent?state.baseline.objects.find(p=>p.id===o.parent)?.label+' › ':'')+o.label+(o.group?' (group)':'');$('object-list').append(option);}objectsReady=true;}
  $('object-list').value=state.selected;
@@ -389,18 +402,21 @@ function receive(text){
  $('position-frame').textContent=selected?.parent?'Position relative to '+state.baseline.objects.find(o=>o.id===selected.parent).label+'. Arrows use world axes.':'World position · X east · Y up · Z south';
  $('position-label').textContent='Position '+units;
  if(selected){for(const [name,field]of [['position','position_m'],['rotation','rotation_degrees']])for(let i=0;i<3;i++){const input=$(name+'-'+i);if(document.activeElement!==input)input.value=+(state.values[state.selected][field][i]/(name==='position'&&units==='in'?.0254:1)).toFixed(name==='position'?4:2);if(name==='position'){input.step=units==='in'?.1:.00254;input.setAttribute('aria-label','Position '+'XYZ'[i]+' in '+(units==='in'?'inches':'meters'));}}}
- $('edit-hint').textContent=state.view_mode?'Drag the scene to look. Use buttons to move. Done returns to your player view.':selected?(state.mode==='move'?'Drag an axis arrow. X east · Y up · Z south.':'Drag a colored ring. World axes · center pivot.'):(scopeRecord?'Tap a part within '+scopeRecord.label+', or choose from the list.':'The game is paused. Tap a furnishing to select it.');
+ $('edit-hint').textContent=state.view_mode?'One finger: '+(state.navigation_mode==='orbit'&&selected?'orbit selection':'look')+'. Two fingers: '+state.navigation_mode+'. Pinch to zoom. Focus centers the selection.':selected?(state.mode==='move'?'Arrows move one axis; squares move two. Two fingers '+state.navigation_mode+' · pinch to zoom.':'Drag a ring to rotate. Two fingers '+state.navigation_mode+' · pinch to zoom.'):(scopeRecord?'Tap a part within '+scopeRecord.label+', or choose from the list.':'The game is paused. Tap a furnishing to select it.');
  const n=changes().length;$('export-feedback').disabled=false;
  const status=state.error||(storageOK?(n?(pointer?.kind==='gizmo'?'Adjusting…':`${n} changed · saved on this device`):''):'Storage unavailable. Export before leaving.');if($('editor-message').textContent!==status)$('editor-message').textContent=status;
  if(state.error&&!state.active)$('edit-launch').title=state.error;
  $('gesture-readout').hidden=!pointer||pointer.kind!=='gizmo';
- if(pointer?.kind==='gizmo'&&selected){const axis=pointer.axis;const delta=state.drag_delta;$('gesture-readout').textContent=selected.label+' · '+(state.mode==='move'?(delta/.0254).toFixed(2)+'″':delta.toFixed(1)+'°');}
+ if(pointer?.kind==='gizmo'&&selected){const axis=pointer.axis;const delta=state.drag_delta;$('gesture-readout').textContent=selected.label+' · '+(state.mode==='move'?(pointer.plane!=null?state.drag_components.map((v,i)=>i===pointer.plane?null:'XYZ'[i]+' '+(v/.0254).toFixed(2)+'″').filter(Boolean).join(' · '):(delta/.0254).toFixed(2)+'″'):delta.toFixed(1)+'°');}
  drawGizmo();window.dispatchEvent(new Event('apartment-editor-state'));
 }
-window.apartmentEditor={getCanvasHeight(){return canvas.getBoundingClientRect().height;},connectGame(fn){callback=fn;},disconnectGame(){callback=null;$('layout-tools').hidden=true;document.body.classList.remove('layout-editing');hadInitial=false;objectsReady=false;},receive,getState(){return state;},requestState(){send({action:'state'});}};
+window.apartmentEditor={getCanvasHeight(){return canvas.getBoundingClientRect().height;},connectGame(fn){callback=fn;},disconnectGame(){clearGesture(false);callback=null;$('layout-tools').hidden=true;document.body.classList.remove('layout-editing');hadInitial=false;objectsReady=false;},receive,getState(){return state;},requestState(){send({action:'state'});}};
+$('layout-tools').addEventListener('pointerdown',e=>{if(!e.target.closest('svg'))clearGesture();},true);
 $('edit-launch').onclick=()=>send({action:'open'});
-$('edit-done').onclick=()=>{send({action:'close'});canvas.focus({preventScroll:true});};
+$('edit-done').onclick=()=>{clearGesture();send({action:'close'});canvas.focus({preventScroll:true});};
 $('move-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'move'});};$('rotate-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'rotate'});};
+ for(const mode of ['pan','orbit'])$('camera-'+mode).onclick=()=>{clearGesture();send({action:'navigation_mode',mode});};
+ for(const [id,scale]of [['zoom-in',1.2],['zoom-out',1/1.2]])$(id).onclick=()=>{clearGesture();send({action:'navigation_start'});send({action:'navigation',scale});send({action:'navigation_end'});};
  $('view-mode').onclick=()=>send({action:'view_mode',value:!state.view_mode});$('view-reset').onclick=()=>send({action:'view_reset'});
  $('focus-object').onclick=()=>send({action:'focus'});$('selection-parent').onclick=()=>send({action:'select',id:state.baseline.objects.find(o=>o.id===state.selected).parent});
  $('parts-toggle').onclick=()=>{send({action:'view_mode',value:false});send({action:'parts'});};
@@ -426,15 +442,71 @@ $('share-feedback').onclick=async()=>{if(!hasFeedback())return;try{await navigat
 $('copy-feedback').onclick=async()=>{if(!hasFeedback())return;try{await navigator.clipboard.writeText(prompt());$('export-message').textContent='Prompt copied. Paste it into Codex to apply and deploy this as the new baseline.';}catch(e){$('copy-fallback').hidden=false;$('copy-fallback').value=prompt();$('copy-fallback').select();$('export-message').textContent='Select and copy the complete prompt below, then paste it in Codex.';}};
 $('close-feedback').onclick=()=>dialog.close();
 const point=e=>{const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];};
-canvas.addEventListener('pointerdown',e=>{if(!state?.active||pointer!==null||e.button>0)return;e.preventDefault();pointer={id:e.pointerId,x:e.clientX,y:e.clientY,kind:state.view_mode?'view':'pick'};canvas.setPointerCapture(e.pointerId);});
-svg.addEventListener('pointerdown',e=>{const target=e.target.closest('[data-axis]');if(!state?.active||!target||pointer!==null||e.button>0)return;e.preventDefault();pointer={id:e.pointerId,kind:'gizmo',axis:+target.dataset.axis,before:[...state.values[state.selected][state.mode==='move'?'position_m':'rotation_degrees']]};svg.setPointerCapture(e.pointerId);send({action:'drag_start',axis:+target.dataset.axis,point:point(e)});});
-function move(e){if(pointer?.id!==e.pointerId)return;e.preventDefault();if(pointer.kind==='gizmo')send({action:'drag',point:point(e)});else if(pointer.kind==='view'){send({action:'view_look',x:(e.clientX-pointer.x)/canvas.clientWidth,y:(e.clientY-pointer.y)/canvas.clientHeight});pointer.x=e.clientX;pointer.y=e.clientY;}}
-function end(e,cancel=false){if(pointer?.id!==e.pointerId)return;const last=pointer;pointer=null;if(last.kind==='gizmo')send({action:cancel?'drag_cancel':'drag_end'});else if(last.kind==='pick'&&!cancel&&Math.hypot(e.clientX-last.x,e.clientY-last.y)<12)send({action:'pick',point:point(e)});}
-for(const el of [canvas,svg]){el.addEventListener('pointermove',move);el.addEventListener('pointerup',e=>end(e));el.addEventListener('pointercancel',e=>end(e,true));el.addEventListener('lostpointercapture',e=>end(e,true));}
-window.addEventListener('blur',()=>{if(pointer){pointer=null;send({action:'drag_cancel'});}});
-function viewport(){const v=window.visualViewport;$('layout-tools').style.setProperty('--keyboard',Math.max(0,innerHeight-(v?.height||innerHeight)-(v?.offsetTop||0))+'px');$('layout-tools').style.setProperty('--vtop',(v?.offsetTop||0)+'px');$('layout-tools').style.setProperty('--vheight',(v?.height||innerHeight)+'px');setTimeout(()=>send({action:'state'}),100);}
+function clearGesture(notify=true){
+ const old=pointer;pointer=null;contacts.clear();
+ if(notify&&old?.kind==='gizmo')send({action:'drag_cancel'});
+ if(notify&&['camera','orbit'].includes(old?.kind))send({action:'navigation_cancel'});
+}
+function pair(ids){const a=contacts.get(ids[0]),b=contacts.get(ids[1]);return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,distance:Math.max(12,Math.hypot(a.x-b.x,a.y-b.y))};}
+function startContact(id,e,target){
+ if(!state?.active||dialog.open||contacts.has(id))return;
+ contacts.set(id,{x:e.clientX,y:e.clientY});
+ if(contacts.size===1){
+  const handle=target.closest?.('[data-axis],[data-plane]');
+  pointer={id,x:e.clientX,y:e.clientY,kind:handle?'gizmo':state.view_mode?(state.navigation_mode==='orbit'&&state.selected?'orbit':'view'):'pick'};
+  if(pointer.kind==='orbit')send({action:'navigation_start'});
+  if(handle){
+   if(handle.dataset.plane!=null)pointer.plane=+handle.dataset.plane;else pointer.axis=+handle.dataset.axis;
+   send({action:'drag_start',axis:pointer.axis??-1,plane:pointer.plane??-1,point:point(e)});
+  }
+ }else if(contacts.size===2&&pointer?.kind!=='blocked'){
+  if(pointer?.kind==='gizmo')send({action:'drag_cancel'});
+  if(pointer?.kind==='orbit')send({action:'navigation_end'});
+  const ids=[...contacts.keys()];pointer={kind:'camera',ids,start:pair(ids),mode:state.navigation_mode};
+  send({action:'navigation_start'});
+ }
+}
+function updateGesture(id,e){
+ if(!pointer)return;
+ if(pointer.kind==='camera'){
+  const now=pair(pointer.ids),r=canvas.getBoundingClientRect();
+  send({action:'navigation',mode:pointer.mode,x:(now.x-pointer.start.x)/r.width,y:(now.y-pointer.start.y)/r.height,scale:now.distance/pointer.start.distance});
+ }else if(pointer.id===id){
+  if(pointer.kind==='gizmo')send({action:'drag',point:point(e)});
+  else if(pointer.kind==='orbit')send({action:'navigation',mode:'orbit',x:(e.clientX-pointer.x)/canvas.clientWidth,y:(e.clientY-pointer.y)/canvas.clientHeight});
+  else if(pointer.kind==='view'){send({action:'view_look',x:(e.clientX-pointer.x)/canvas.clientWidth,y:(e.clientY-pointer.y)/canvas.clientHeight});pointer.x=e.clientX;pointer.y=e.clientY;}
+ }
+}
+function endContact(id,e,cancel=false){
+ if(!contacts.has(id))return;
+ const last=pointer;contacts.delete(id);
+ if(last?.kind==='camera'&&last.ids.includes(id)){
+  pointer=contacts.size?{kind:'blocked'}:null;
+  send({action:cancel?'navigation_cancel':'navigation_end'});
+ }else if(last?.id===id){
+  pointer=contacts.size?{kind:'blocked'}:null;
+  if(last.kind==='orbit')send({action:cancel?'navigation_cancel':'navigation_end'});
+  if(last.kind==='gizmo')send({action:cancel?'drag_cancel':'drag_end'});
+  else if(last.kind==='pick'&&!cancel&&Math.hypot(e.clientX-last.x,e.clientY-last.y)<12)send({action:'pick',point:point(e)});
+ }
+ if(!contacts.size){pointer=null;send({action:'state'});}
+}
+for(const el of [canvas,svg]){
+ if(nativeTouch){
+  el.addEventListener('touchstart',e=>{if(!state?.active||dialog.open)return;e.preventDefault();for(const t of e.changedTouches)startContact(t.identifier,t,t.target||e.target);},{passive:false});
+  el.addEventListener('touchmove',e=>{if(!contacts.size)return;e.preventDefault();let changed;for(const t of e.changedTouches)if(contacts.has(t.identifier)){contacts.set(t.identifier,{x:t.clientX,y:t.clientY});changed=t;}if(changed)updateGesture(changed.identifier,changed);},{passive:false});
+  for(const event of ['touchend','touchcancel'])el.addEventListener(event,e=>{for(const t of e.changedTouches)endContact(t.identifier,t,event==='touchcancel');},{passive:false});
+ }
+ el.addEventListener('pointerdown',e=>{if(!state?.active||e.button>0||(nativeTouch&&e.pointerType!=='mouse'))return;e.preventDefault();startContact(e.pointerId,e,e.target);try{el.setPointerCapture(e.pointerId);}catch{}});
+ el.addEventListener('lostpointercapture',e=>{if(!nativeTouch||e.pointerType==='mouse')endContact(e.pointerId,e,true);});
+}
+window.addEventListener('pointermove',e=>{if(nativeTouch&&e.pointerType!=='mouse')return;if(!contacts.has(e.pointerId))return;e.preventDefault();contacts.set(e.pointerId,{x:e.clientX,y:e.clientY});updateGesture(e.pointerId,e);});
+for(const event of ['pointerup','pointercancel'])window.addEventListener(event,e=>{if(!nativeTouch||e.pointerType==='mouse')endContact(e.pointerId,e,event==='pointercancel');});
+window.addEventListener('blur',()=>clearGesture());window.addEventListener('pagehide',()=>clearGesture());
+document.addEventListener('visibilitychange',()=>{if(document.hidden)clearGesture();});
+function viewport(){clearGesture();const v=window.visualViewport;$('layout-tools').style.setProperty('--keyboard',Math.max(0,innerHeight-(v?.height||innerHeight)-(v?.offsetTop||0))+'px');$('layout-tools').style.setProperty('--vtop',(v?.offsetTop||0)+'px');$('layout-tools').style.setProperty('--vheight',(v?.height||innerHeight)+'px');setTimeout(()=>send({action:'state'}),100);}
  window.addEventListener('resize',viewport);window.visualViewport?.addEventListener('resize',viewport);window.visualViewport?.addEventListener('scroll',viewport);
- document.addEventListener('keydown',e=>{if(!state?.active||/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName))return;if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();send({action:e.shiftKey?'redo':'undo'});}if(e.key==='Escape'){send({action:'drag_cancel'});}});
+ document.addEventListener('keydown',e=>{if(!state?.active||/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName))return;if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();send({action:e.shiftKey?'redo':'undo'});}if(e.key==='Escape'){clearGesture();}});
 window.addEventListener('beforeunload',e=>{if(state&&(changes().length||$('feedback-note').value.trim())){e.preventDefault();e.returnValue='';}});
 })();
 </script>
