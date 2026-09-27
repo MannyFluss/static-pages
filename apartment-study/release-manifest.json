@@ -6,7 +6,8 @@
     "object-review-forward_plus",
     "object-review-gl_compatibility",
     "object-gallery",
-    "local-browser"
+    "local-browser",
+    "webkit-input"
   ],
   "files": {
     ".nojekyll": {
@@ -29,9 +30,9 @@
       "bytes": 43855,
       "sha256": "0b3be9bddebbc0598bc6effb530739e7177e373b3d0843144725e7b307c325d3"
     },
-    "game-0b109828f350.pck": {
+    "game-0d01d6dfa155.pck": {
       "bytes": 322168,
-      "sha256": "34c61ed28adfe31cb91a95860587f06305dbebf9b59e8eb6661ec2d84cd3653e"
+      "sha256": "94b4c573c0e68c046e7e7be98437b3944adc71a4a32addab6203fac2df6cba34"
     },
     "hood-cabinet.png": {
       "bytes": 39710,
@@ -47,7 +48,7 @@
     },
     "index.html": {
       "bytes": 8056,
-      "sha256": "da6b9018ddb8d09b637cd08d29c79df3f687a55281228a2192c98b7326a439fb"
+      "sha256": "f693c2b6ee41e04a086a2e150680cd27e926aa47565f166294a50eeeb0bebf67"
     },
     "index.js": {
       "bytes": 279815,
@@ -70,12 +71,12 @@
       "sha256": "6fe6c344dc007f8dfb01d93d2b57ad616fbba96e62ea40d4bf0d3dfa92e32f58"
     },
     "play.html": {
-      "bytes": 44242,
-      "sha256": "3c0a20016dba8fafccf3c8a0bf4b05c5e78ca4a79d9cf795c0f576ff8280be8c"
+      "bytes": 47507,
+      "sha256": "1485f31855285f12e134e0f08a87cffb2f27cd067e504edb37dd83c1ff593097"
     },
     "source-revision.txt": {
       "bytes": 41,
-      "sha256": "324378e5b40d049c32576d41d1027fd10948e27295c2c0d7bd4211fa455547dc"
+      "sha256": "f0821445d2e04cad7f26f3dcc5bf66a00686008e4cb2d9529e3e7b59151197a9"
     },
     "wall-shelves.png": {
       "bytes": 36731,
@@ -87,5 +88,5 @@
     "playwright": "1.62.1",
     "pngjs": "7.0.0"
   },
-  "source_revision": "0b109828f35087ce8ffc73b43b886fe025a0168d"
+  "source_revision": "0d01d6dfa1558280cfe3f16368f1c79bc5939947"
 }

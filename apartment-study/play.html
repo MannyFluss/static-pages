@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-0b109828f350.pck":322168},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-0b109828f350.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-0d01d6dfa155.pck":322168},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-0d01d6dfa155.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -240,19 +240,34 @@ body.layout-editing #play-touch{display:none!important}
 'use strict';
 const $=id=>document.getElementById(id),root=$('play-touch'),surface=$('touch-surface'),pad=$('touch-pad'),thumb=$('touch-thumb');
 let callback=null,state=null;const contacts=new Map(),held=new Map();
+// iPad Safari delivers native TouchEvents. Use one stream, never double-handle
+// the accompanying PointerEvents. Pointer input remains the pen-only fallback.
+const nativeTouch='ontouchstart' in window;
+const counts={start:0,move:0,end:0,cancel:0,captureErrors:0};let lastClear='startup';
 function send(command){if(callback)callback(JSON.stringify(command));}
 function local(e){const r=surface.getBoundingClientRect();return {point:[e.clientX-r.left,e.clientY-r.top],width:r.width};}
-function release(el,id){if(el.hasPointerCapture(id))el.releasePointerCapture(id);}
-function clear(notify=true){const active=[...contacts.keys()],buttons=[...held.entries()];contacts.clear();held.clear();for(const id of active)release(surface,id);for(const [id,el]of buttons){el.dataset.held='false';release(el,id);}pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';if(notify)send({action:'clear'});}
+function release(el,id){try{if(el.hasPointerCapture(id))el.releasePointerCapture(id);}catch{counts.captureErrors++;}}
+function clear(notify=true,reason='game-state'){lastClear=reason;const active=[...contacts.keys()],buttons=[...held.entries()];contacts.clear();held.clear();if(!nativeTouch)for(const id of active)release(surface,id);for(const [id,el]of buttons){el.dataset.held='false';release(el,id);}pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';if(notify)send({action:'clear'});}
 function receive(text){state=JSON.parse(text);root.hidden=state.blocked;$('touch-scene').hidden=!state.has_modes;$('touch-scene').textContent=state.portal?'Building':'Portal study';if(state.blocked||state.paused)clear(false);$('touch-pause').textContent=state.paused?'Resume':'Pause';$('touch-steer').textContent=state.steer?'Steer':'Strafe';$('touch-steer').setAttribute('aria-label',state.steer?'Movement mode: steer. Tap for strafe.':'Movement mode: strafe. Tap for one-finger steering.');$('touch-help').textContent=state.paused?'Paused · tap Resume':state.steer?'Left: walk + turn · Right: look':'Left: move · Right: look';const move=contacts.get(state.move_id);if(move){pad.style.left=(move.start[0]-62)+'px';pad.style.top=(move.start[1]-62)+'px';pad.style.bottom='auto';thumb.style.transform=`translate(${state.movement[0]*62}px,${state.movement[1]*62}px)`;}else{pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';}}
-window.apartmentTouch={connectGame(fn){callback=fn;send({action:'state'});},disconnectGame(){clear(false);callback=null;state=null;root.hidden=true;},receive,getState(){return state;},requestState(){send({action:'state'});}};
-surface.addEventListener('pointerdown',e=>{if(!callback||state?.blocked||state?.paused||!['touch','pen'].includes(e.pointerType))return;e.preventDefault();$('canvas').focus({preventScroll:true});const p=local(e);contacts.set(e.pointerId,{start:p.point,last:p.point});surface.setPointerCapture(e.pointerId);send({action:'start',id:e.pointerId,...p});});
-surface.addEventListener('pointermove',e=>{const p=contacts.get(e.pointerId);if(!p)return;e.preventDefault();const next=local(e);const delta=next.point.map((v,i)=>v-p.last[i]);p.last=next.point;send({action:'move',id:e.pointerId,...next,delta});});
-function end(e){if(!contacts.has(e.pointerId))return;contacts.delete(e.pointerId);send({action:'end',id:e.pointerId});release(surface,e.pointerId);}
-for(const event of ['pointerup','pointercancel','lostpointercapture'])surface.addEventListener(event,end);
-for(const [id,action]of [['touch-jump','jump'],['touch-steer','steer'],['touch-reset','reset'],['touch-pause','pause'],['touch-scene','mode']]){const button=$(id);button.addEventListener('pointerdown',e=>{if(e.button>0||!callback||state?.blocked)return;e.preventDefault();button.setPointerCapture(e.pointerId);held.set(e.pointerId,button);button.dataset.held='true';send({action});});function up(e){if(held.get(e.pointerId)!==button)return;held.delete(e.pointerId);button.dataset.held='false';release(button,e.pointerId);}for(const event of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(event,up);button.addEventListener('click',e=>{if(e.detail===0)send({action});});}
-window.addEventListener('blur',()=>clear());window.addEventListener('pagehide',()=>clear());window.addEventListener('resize',()=>clear());document.addEventListener('visibilitychange',()=>{if(document.hidden)clear();});window.visualViewport?.addEventListener('resize',()=>clear());
-window.addEventListener('apartment-editor-state',()=>{if(window.apartmentEditor?.getState()?.active)clear();});
+function report(){return {schema:'apartment-input-report/v1',revision:'0d01d6dfa1558280cfe3f16368f1c79bc5939947',browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints,inputPath:nativeTouch?'touch-events':'pointer-events',viewport:[innerWidth,innerHeight],visible:!document.hidden,documentFocused:document.hasFocus(),activeElement:document.activeElement?.id||document.activeElement?.tagName,connected:!!callback,state,counts:{...counts},lastClear};}
+window.apartmentTouch={connectGame(fn){callback=fn;send({action:'state'});},disconnectGame(){clear(false,'disconnect');callback=null;state=null;root.hidden=true;},receive,getState(){return state;},getReport:report,requestState(){send({action:'state'});}};
+function begin(id,e){if(!callback||state?.blocked||state?.paused)return false;const p=local(e);$('canvas').focus({preventScroll:true});contacts.set(id,{start:p.point,last:p.point});counts.start++;send({action:'start',id,...p});return true;}
+function move(id,e){const p=contacts.get(id);if(!p)return;const next=local(e),delta=next.point.map((v,i)=>v-p.last[i]);p.last=next.point;counts.move++;send({action:'move',id,...next,delta});}
+function end(id,cancelled=false){if(!contacts.has(id))return;contacts.delete(id);counts[cancelled?'cancel':'end']++;send({action:'end',id});}
+if(nativeTouch){
+ surface.addEventListener('touchstart',e=>{if(!callback||state?.blocked||state?.paused)return;e.preventDefault();for(const t of e.changedTouches)begin(t.identifier,t);},{passive:false});
+ surface.addEventListener('touchmove',e=>{if(!contacts.size)return;e.preventDefault();for(const t of e.changedTouches)move(t.identifier,t);},{passive:false});
+ for(const name of ['touchend','touchcancel'])surface.addEventListener(name,e=>{for(const t of e.changedTouches)end(t.identifier,name==='touchcancel');},{passive:false});
+}else{
+ surface.addEventListener('pointerdown',e=>{if(!['touch','pen'].includes(e.pointerType))return;e.preventDefault();if(begin(e.pointerId,e)){try{surface.setPointerCapture(e.pointerId);}catch{counts.captureErrors++;}}});
+ // Window listeners preserve release/movement even when capture is unavailable.
+ window.addEventListener('pointermove',e=>{if(contacts.has(e.pointerId)){e.preventDefault();move(e.pointerId,e);}});
+ for(const name of ['pointerup','pointercancel'])window.addEventListener(name,e=>{end(e.pointerId,name==='pointercancel');release(surface,e.pointerId);});
+ surface.addEventListener('lostpointercapture',e=>end(e.pointerId,true));
+}
+for(const [id,action]of [['touch-jump','jump'],['touch-steer','steer'],['touch-reset','reset'],['touch-pause','pause'],['touch-scene','mode']]){const button=$(id);button.addEventListener('pointerdown',e=>{if(e.button>0||!callback||state?.blocked)return;e.preventDefault();try{button.setPointerCapture(e.pointerId);}catch{counts.captureErrors++;}held.set(e.pointerId,button);button.dataset.held='true';$('canvas').focus({preventScroll:true});send({action});});function up(e){if(held.get(e.pointerId)!==button)return;held.delete(e.pointerId);button.dataset.held='false';release(button,e.pointerId);}for(const event of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(event,up);button.addEventListener('click',e=>{if(e.detail===0){$('canvas').focus({preventScroll:true});send({action});}});}
+window.addEventListener('blur',()=>clear(true,'window-blur'));window.addEventListener('pagehide',()=>clear(true,'page-hide'));window.addEventListener('resize',()=>clear(true,'window-resize'));document.addEventListener('visibilitychange',()=>{if(document.hidden)clear(true,'document-hidden');});window.visualViewport?.addEventListener('resize',()=>clear(true,'visual-viewport-resize'));
+window.addEventListener('apartment-editor-state',()=>{if(window.apartmentEditor?.getState()?.active)clear(true,'editor');});
 })();
 </script>
 <style>
@@ -306,7 +321,7 @@ body.layout-editing>a{display:none!important}
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('canvas'), svg=$('gizmo'), dialog=$('feedback-dialog');
 let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false,partsScope=null;
-const revision='0b109828f35087ce8ffc73b43b886fe025a0168d', colors=['#ff6b70','#82db8f','#78a8ff'];
+const revision='0d01d6dfa1558280cfe3f16368f1c79bc5939947', colors=['#ff6b70','#82db8f','#78a8ff'];
 const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),rotation_degrees:t.rotation_degrees.map(n=>+n.toFixed(5))});
 const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||a.rotation_degrees.some((n,i)=>Math.abs(n-b.rotation_degrees[i])>0.0001);
 function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:(o.parent?state.baseline.objects.find(p=>p.id===o.parent).label+' › ':'')+o.label,before:clean(o),after:clean(state.values[o.id])}));}
@@ -433,16 +448,18 @@ window.addEventListener('beforeunload',e=>{if(state&&(changes().length||$('feedb
 <button id="arrival-all" autofocus>Reveal all objects</button>
 <button id="arrival-restart">Restart arrivals</button>
 <p id="arrival-count" role="status" aria-live="polite"></p>
+<details><summary>Input help</summary><p>If movement stops, return to the game and tap Resume. If that fails, copy an input report for Codex.</p><button id="input-report">Copy input report</button><p id="input-report-status" role="status"></p><textarea id="input-report-text" readonly hidden aria-label="Input report to copy" style="box-sizing:border-box;width:100%;min-height:120px"></textarea></details>
 <button id="arrival-close">Back to game</button>
 </dialog>
 <script>
 (()=>{
-const launch=document.getElementById('arrival-launch'),dialog=document.getElementById('arrival-dialog'),count=document.getElementById('arrival-count');let callback=null,state=null;
+const launch=document.getElementById('arrival-launch'),dialog=document.getElementById('arrival-dialog'),count=document.getElementById('arrival-count');let callback=null,state=null,beforeMenuReport=null;
 const send=data=>callback?.(JSON.stringify(data));
 window.apartmentArrivals={connectGame(fn){callback=fn;},disconnectGame(){callback=null;launch.hidden=true;if(dialog.open)dialog.close();},receive(text){state=JSON.parse(text);launch.hidden=state.editor||state.portal;const next=`${state.arrived.length} of ${state.total} objects present. ${state.status}`;if(count.textContent!==next)count.textContent=next;},getState(){return state;},requestState(){send({action:'state'});}};
-launch.onclick=()=>{send({action:'menu',open:true});dialog.showModal();};
+launch.onclick=()=>{beforeMenuReport=window.apartmentTouch?.getReport?.()||null;send({action:'menu',open:true});dialog.showModal();};
 document.getElementById('arrival-all').onclick=()=>send({action:'all'});
 document.getElementById('arrival-restart').onclick=()=>send({action:'restart'});
+document.getElementById('input-report').onclick=async()=>{const report=beforeMenuReport||window.apartmentTouch?.getReport?.()||{schema:'apartment-input-report/v1',connected:false,browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints};const text='Apartment Study controls are not working. Please diagnose this input report; it contains browser/input state before opening Cheats, not layout edits.\n\n'+JSON.stringify(report,null,2);const field=document.getElementById('input-report-text'),status=document.getElementById('input-report-status');field.value=text;field.hidden=false;try{await navigator.clipboard.writeText(text);status.textContent='Copied. Paste into Codex.';}catch{status.textContent='Select and copy the report below.';field.select();}};
 document.getElementById('arrival-close').onclick=()=>dialog.close();
 dialog.addEventListener('close',()=>{send({action:'menu',open:false});launch.focus({preventScroll:true});});
 dialog.addEventListener('keydown',e=>e.stopPropagation());
