@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-ec1f3b29a99c.pck":331948},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-ec1f3b29a99c.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-eb2b6819de99.pck":331516},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-eb2b6819de99.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -251,7 +251,7 @@ function local(e){const r=surface.getBoundingClientRect();return {point:[e.clien
 function release(el,id){try{if(el.hasPointerCapture(id))el.releasePointerCapture(id);}catch{counts.captureErrors++;}}
 function clear(notify=true,reason='game-state'){lastClear=reason;const active=[...contacts.keys()],buttons=[...held.entries()];contacts.clear();held.clear();if(!nativeTouch)for(const id of active)release(surface,id);for(const [id,el]of buttons){el.dataset.held='false';release(el,id);}pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';if(notify)send({action:'clear'});}
 function receive(text){state=JSON.parse(text);$('touch-fly').hidden=!state.noclip;$('touch-jump').hidden=!!state.noclip;root.hidden=state.blocked;$('touch-scene').hidden=!state.has_modes;$('touch-scene').textContent=state.portal?'Building':'Portal study';if(state.blocked||state.paused)clear(false);$('touch-pause').textContent=state.paused?'Resume':'Pause';$('touch-steer').textContent=state.steer?'Steer':'Strafe';$('touch-steer').setAttribute('aria-label',state.steer?'Movement mode: steer. Tap for strafe.':'Movement mode: strafe. Tap for one-finger steering.');$('touch-help').textContent=state.paused?'Paused · tap Resume':state.noclip?'Noclip · move to fly · hold Up / Down':state.steer?'Left: walk + turn · Right: look':'Left: move · Right: look';const move=[...contacts.values()].find(p=>p.gameId===state.move_id);if(move){pad.style.left=(move.start[0]-62)+'px';pad.style.top=(move.start[1]-62)+'px';pad.style.bottom='auto';thumb.style.transform=`translate(${state.movement[0]*62}px,${state.movement[1]*62}px)`;}else{pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';}}
-function report(){return {schema:'apartment-input-report/v1',revision:'ec1f3b29a99cc1c56fe31ae9f245aae160ffc227',browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints,inputPath:nativeTouch?'touch-events':'pointer-events',viewport:[innerWidth,innerHeight],visible:!document.hidden,documentFocused:document.hasFocus(),activeElement:document.activeElement?.id||document.activeElement?.tagName,connected:!!callback,state,counts:{...counts},lastClear,lastStart,lastMove};}
+function report(){return {schema:'apartment-input-report/v1',revision:'eb2b6819de998997cdc3b7c148e518652be7b87f',browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints,inputPath:nativeTouch?'touch-events':'pointer-events',viewport:[innerWidth,innerHeight],visible:!document.hidden,documentFocused:document.hasFocus(),activeElement:document.activeElement?.id||document.activeElement?.tagName,connected:!!callback,state,counts:{...counts},lastClear,lastStart,lastMove};}
 window.apartmentTouch={connectGame(fn){callback=fn;send({action:'state'});},disconnectGame(){clear(false,'disconnect');callback=null;state=null;root.hidden=true;},receive,getState(){return state;},getReport:report,requestState(){send({action:'state'});}};
 // Browser IDs may be negative, including -1. Keep them only as opaque Map keys;
 // Godot reserves -1 for "no contact", so allocate separate nonnegative slot IDs.
@@ -329,7 +329,7 @@ body.layout-editing>a{display:none!important}
 const $=id=>document.getElementById(id), canvas=$('canvas'), svg=$('gizmo'), dialog=$('feedback-dialog');
 let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false,partsScope=null;
 const contacts=new Map(),nativeTouch='ontouchstart' in window;
-const revision='ec1f3b29a99cc1c56fe31ae9f245aae160ffc227', colors=['#ff6b70','#82db8f','#78a8ff'];
+const revision='eb2b6819de998997cdc3b7c148e518652be7b87f', colors=['#ff6b70','#82db8f','#78a8ff'];
 const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),rotation_degrees:t.rotation_degrees.map(n=>+n.toFixed(5))});
 const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||a.rotation_degrees.some((n,i)=>Math.abs(n-b.rotation_degrees[i])>0.0001);
 function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:(o.parent?state.baseline.objects.find(p=>p.id===o.parent).label+' › ':'')+o.label,before:clean(o),after:clean(state.values[o.id])}));}

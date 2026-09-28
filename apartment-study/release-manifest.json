@@ -19,20 +19,20 @@
       "sha256": "aca89d2eef74d4c90602b7a4ffbb4dcafb357bb5c993e5b10d05979ff70ac2e4"
     },
     "furnished-bistro.png": {
-      "bytes": 38395,
-      "sha256": "bc3eea846830ed7fe7b5d38819abaf551110aee413fb27c77ca98650f247893a"
+      "bytes": 43636,
+      "sha256": "c109527f8938a6651fc23ee22f8a75b0dbcca66dc66502dce870b8f3c895963d"
     },
     "furnished-kitchen.png": {
-      "bytes": 44981,
-      "sha256": "cc8cb96bee3e97ba9d052a37751c23023556f6de2c0696e1991c66f903a05565"
+      "bytes": 41732,
+      "sha256": "303f5af8d9175ca52ccc8a0a6a9b8061ec70d9a4a47ed2eea5604f0ac7c945e7"
     },
     "furnished-media.png": {
-      "bytes": 43855,
-      "sha256": "0b3be9bddebbc0598bc6effb530739e7177e373b3d0843144725e7b307c325d3"
+      "bytes": 43289,
+      "sha256": "c3562eab26c21615e0efb52588ab281e85156e10e659ca6f6634617a2df024fc"
     },
-    "game-ec1f3b29a99c.pck": {
-      "bytes": 331948,
-      "sha256": "f0cd4b72639361fb388bcba50deab865df144b869d833d74700c9cb42094a3ad"
+    "game-eb2b6819de99.pck": {
+      "bytes": 331516,
+      "sha256": "cdb4e7d5929b3d31e73a64f352f03862b1b227b48ee4ffc61ee9cfca4d6ba703"
     },
     "hood-cabinet.png": {
       "bytes": 39710,
@@ -48,7 +48,7 @@
     },
     "index.html": {
       "bytes": 8056,
-      "sha256": "1f91a43e3b109022de2121bcae8fcf8efe2039ee99404adb7632686b377fc309"
+      "sha256": "0a031923ec0bb04b0cede98d6349f331e807f3307cfdb107ed14c96213a20a76"
     },
     "index.js": {
       "bytes": 279815,
@@ -72,11 +72,11 @@
     },
     "play.html": {
       "bytes": 54841,
-      "sha256": "535938c03ce63f98f57a62d3c22db81f17210766c63d2ca3abf453cd7990ece7"
+      "sha256": "e1b50f99c7190104235e6b9358f0c8dc1b7777fd427af144d7d75ad5ca2133dd"
     },
     "source-revision.txt": {
       "bytes": 41,
-      "sha256": "0e80dc2d5d7fd3269b1cec0587aaa72e83e93aa0cea58e9c49c5b37ef39a9429"
+      "sha256": "9bac45c7f13cba2f1113a124ec28764b08eefea2329d7c31021226cc257f7d50"
     },
     "wall-shelves.png": {
       "bytes": 36731,
@@ -88,5 +88,5 @@
     "playwright": "1.62.1",
     "pngjs": "7.0.0"
   },
-  "source_revision": "ec1f3b29a99cc1c56fe31ae9f245aae160ffc227"
+  "source_revision": "eb2b6819de998997cdc3b7c148e518652be7b87f"
 }
