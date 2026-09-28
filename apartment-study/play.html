@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-eb2b6819de99.pck":331516},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-eb2b6819de99.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-57634a755679.pck":331532},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-57634a755679.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -251,7 +251,7 @@ function local(e){const r=surface.getBoundingClientRect();return {point:[e.clien
 function release(el,id){try{if(el.hasPointerCapture(id))el.releasePointerCapture(id);}catch{counts.captureErrors++;}}
 function clear(notify=true,reason='game-state'){lastClear=reason;const active=[...contacts.keys()],buttons=[...held.entries()];contacts.clear();held.clear();if(!nativeTouch)for(const id of active)release(surface,id);for(const [id,el]of buttons){el.dataset.held='false';release(el,id);}pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';if(notify)send({action:'clear'});}
 function receive(text){state=JSON.parse(text);$('touch-fly').hidden=!state.noclip;$('touch-jump').hidden=!!state.noclip;root.hidden=state.blocked;$('touch-scene').hidden=!state.has_modes;$('touch-scene').textContent=state.portal?'Building':'Portal study';if(state.blocked||state.paused)clear(false);$('touch-pause').textContent=state.paused?'Resume':'Pause';$('touch-steer').textContent=state.steer?'Steer':'Strafe';$('touch-steer').setAttribute('aria-label',state.steer?'Movement mode: steer. Tap for strafe.':'Movement mode: strafe. Tap for one-finger steering.');$('touch-help').textContent=state.paused?'Paused · tap Resume':state.noclip?'Noclip · move to fly · hold Up / Down':state.steer?'Left: walk + turn · Right: look':'Left: move · Right: look';const move=[...contacts.values()].find(p=>p.gameId===state.move_id);if(move){pad.style.left=(move.start[0]-62)+'px';pad.style.top=(move.start[1]-62)+'px';pad.style.bottom='auto';thumb.style.transform=`translate(${state.movement[0]*62}px,${state.movement[1]*62}px)`;}else{pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';}}
-function report(){return {schema:'apartment-input-report/v1',revision:'eb2b6819de998997cdc3b7c148e518652be7b87f',browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints,inputPath:nativeTouch?'touch-events':'pointer-events',viewport:[innerWidth,innerHeight],visible:!document.hidden,documentFocused:document.hasFocus(),activeElement:document.activeElement?.id||document.activeElement?.tagName,connected:!!callback,state,counts:{...counts},lastClear,lastStart,lastMove};}
+function report(){return {schema:'apartment-input-report/v1',revision:'57634a755679492ae3cf2df2a1b6bcf7239a33f2',browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints,inputPath:nativeTouch?'touch-events':'pointer-events',viewport:[innerWidth,innerHeight],visible:!document.hidden,documentFocused:document.hasFocus(),activeElement:document.activeElement?.id||document.activeElement?.tagName,connected:!!callback,state,counts:{...counts},lastClear,lastStart,lastMove};}
 window.apartmentTouch={connectGame(fn){callback=fn;send({action:'state'});},disconnectGame(){clear(false,'disconnect');callback=null;state=null;root.hidden=true;},receive,getState(){return state;},getReport:report,requestState(){send({action:'state'});}};
 // Browser IDs may be negative, including -1. Keep them only as opaque Map keys;
 // Godot reserves -1 for "no contact", so allocate separate nonnegative slot IDs.
@@ -275,7 +275,48 @@ window.addEventListener('blur',()=>clear(true,'window-blur'));window.addEventLis
 window.addEventListener('apartment-editor-state',()=>{if(window.apartmentEditor?.getState()?.active)clear(true,'editor');});
 })();
 </script>
-<style>
+<script>// Persistent public data contract. Read docs/browser-preferences.md before changing it.
+(function(root,factory){
+ const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.ApartmentPreferences=api;
+})(globalThis,()=>{
+ 'use strict';
+ const KEY='apartment-study:preferences',SCHEMA='apartment-settings',VERSION=1;
+ const DEFAULTS=Object.freeze({twoFingerDrag:'orbit',units:'in',snapMove:0.00254});
+ const allowed={twoFingerDrag:['pan','orbit'],units:['in','m'],snapMove:[0,0.00254,0.003175,0.0254]};
+ const object=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
+ function decode(raw){
+  if(raw===null)return {document:{schema:SCHEMA,version:VERSION,editor:{}},values:{...DEFAULTS},status:'ready'};
+  let document;try{document=JSON.parse(raw);}catch{return {values:{...DEFAULTS},status:'protected'};}
+  if(!object(document)||document.schema!==SCHEMA||document.version!==VERSION||!object(document.editor))return {values:{...DEFAULTS},status:'protected'};
+  const values={...DEFAULTS};for(const key of Object.keys(DEFAULTS))if(allowed[key].includes(document.editor[key]))values[key]=document.editor[key];
+  return {document,values,status:'ready'};
+ }
+ function create(storageProvider){
+  let values={...DEFAULTS},status='ready',pending={};
+  function read(){try{return decode(storageProvider().getItem(KEY));}catch{return {values:{...DEFAULTS},status:'session-only'};}}
+  const initial=read();values=initial.values;status=initial.status;
+  function update(patch){
+   if(!object(patch)||Object.entries(patch).some(([key,value])=>!Object.hasOwn(allowed,key)||!allowed[key].includes(value)))throw Error('Invalid preference update');
+   const current=read();status=current.status;
+   // Re-read before writing so older tabs preserve unknown fields and newer formats.
+   pending={...pending,...patch};
+   values={...(status==='ready'?current.values:values),...pending};
+   if(status!=='ready')return false;
+   try{storageProvider().setItem(KEY,JSON.stringify({...current.document,editor:{...current.document.editor,...pending}}));pending={};return true;}catch{status='session-only';return false;}
+  }
+  function reset(){
+   values={...DEFAULTS};pending={...DEFAULTS};
+   try{
+    const storage=storageProvider(),raw=storage.getItem(KEY);
+    if(raw!==null)storage.setItem(KEY+':backup:'+Date.now()+':'+Math.random().toString(16).slice(2),raw);
+    storage.setItem(KEY,JSON.stringify({schema:SCHEMA,version:VERSION,editor:{...DEFAULTS}}));pending={};status='ready';return true;
+   }catch{status='session-only';return false;}
+  }
+  return {get values(){return {...values};},get status(){return status;},update,reset};
+ }
+ return {KEY,SCHEMA,VERSION,DEFAULTS,decode,create};
+});
+</script><style>
 #layout-tools{font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1c2330;position:fixed;inset:0;z-index:30;pointer-events:none;--panel:#f7f7fa;--edge:#b6bdc8;--red:#b7323e;--green:#287342;--blue:#225fbe;--keyboard:0px;--vtop:0px;--vheight:100dvh}
 #layout-tools [hidden]{display:none!important}#layout-tools *{box-sizing:border-box}
 #layout-tools button,#layout-tools input,#layout-tools select,#layout-tools summary{font:inherit;color:inherit;min-height:46px;min-width:46px;border:1px solid transparent;border-radius:9px;background:#e9ebef;padding:9px 12px;touch-action:manipulation}
@@ -312,7 +353,8 @@ body.layout-editing>a{display:none!important}
 <div id="selection-actions" class="control-row"><button id="objects-toggle" aria-expanded="false">Objects</button><button id="parts-toggle" hidden>Parts</button><button id="focus-object" hidden>Focus</button></div>
 <div id="parts-panel" hidden><div class="control-row"><label for="parts-list" id="parts-label">Parts</label><button id="scope-root">Whole room</button></div><select id="parts-list" aria-label="Select a part" style="width:100%"></select></div>
 <div id="objects-panel" hidden><label for="object-list">Select an object or group</label><select id="object-list"><option value="">Choose an object…</option></select></div>
-<div class="control-row" id="camera-gestures" aria-label="Two-finger drag"><span>Two fingers</span><button id="camera-pan" aria-pressed="true">Pan</button><button id="camera-orbit" aria-pressed="false">Orbit</button></div>
+<div class="control-row" id="camera-gestures" aria-label="Two-finger drag"><span>Two fingers</span><button id="camera-pan" aria-pressed="false">Pan</button><button id="camera-orbit" aria-pressed="true">Orbit</button></div>
+<div id="gesture-map" style="font-size:14px;margin-top:6px">One finger: pan · Two fingers: orbit · Pinch: zoom</div><details id="preferences-panel"><summary>Local preferences</summary><p id="preferences-status" role="status"></p><p>Gesture choice, units and snapping stay in this browser, across layout updates.</p><button id="reset-preferences">Reset preferences</button></details>
 <div id="view-controls" hidden><div class="control-row"><button data-view="0,0,-0.3">Forward</button><button data-view="0,0,0.3">Back</button><button id="view-reset">Player view</button></div><div class="control-row"><button id="zoom-in">Zoom in</button><button id="zoom-out">Zoom out</button><button id="view-noclip" aria-pressed="false">Noclip: Off</button></div><div class="control-row"><button data-view="-0.3,0,0">Left</button><button data-view="0.3,0,0">Right</button><button data-view="0,0.3,0">Up</button><button data-view="0,-0.3,0">Down</button></div></div>
 <details id="precision" hidden><summary>Precision</summary>
 <div id="precision-options" class="control-row"><label>Units <select id="units"><option value="in">Inches</option><option value="m">Meters</option></select></label><label>Snap <select id="snap-size"><option value="0.00254">0.1″ / 1°</option><option value="0.003175">⅛″ / 1°</option><option value="0.0254">1″ / 15°</option><option value="0">Off</option></select></label></div>
@@ -327,18 +369,24 @@ body.layout-editing>a{display:none!important}
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('canvas'), svg=$('gizmo'), dialog=$('feedback-dialog');
-let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false,partsScope=null;
+const preferences=ApartmentPreferences.create(()=>localStorage);
+let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units=preferences.values.units,objectsReady=false,draftDirty=false,partsScope=null;
 const contacts=new Map(),nativeTouch='ontouchstart' in window;
-const revision='eb2b6819de998997cdc3b7c148e518652be7b87f', colors=['#ff6b70','#82db8f','#78a8ff'];
+const revision='57634a755679492ae3cf2df2a1b6bcf7239a33f2', colors=['#ff6b70','#82db8f','#78a8ff'];
 const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),rotation_degrees:t.rotation_degrees.map(n=>+n.toFixed(5))});
 const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||a.rotation_degrees.some((n,i)=>Math.abs(n-b.rotation_degrees[i])>0.0001);
 function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:(o.parent?state.baseline.objects.find(p=>p.id===o.parent).label+' › ':'')+o.label,before:clean(o),after:clean(state.values[o.id])}));}
 function key(){return 'apartment-editor-v3:'+state.baseline.base_layout_hash;}
 function send(command){if(callback)callback(JSON.stringify(command));}
 function saveDraft(){if(!hadInitial)return;try{localStorage.setItem(key(),JSON.stringify({values:state.values,note:$('feedback-note').value}));}catch(e){storageOK=false;}}
+function applyPreferences(){
+ const value=preferences.values;units=value.units;$('units').value=units;$('snap-size').value=String(value.snapMove);
+ $('preferences-status').textContent=preferences.status==='ready'?'Saved on this browser.':preferences.status==='protected'?'Saved settings use an unreadable or newer format. They are preserved; changes apply for this session. Reset makes a backup first.':'Browser storage unavailable. Preferences apply for this session only.';
+ send({action:'navigation_mode',mode:value.twoFingerDrag});send({action:'snap',move:value.snapMove,rotate:value.snapMove===.0254?15:value.snapMove===0?0:1});
+}
 function node(name,attrs){const el=document.createElementNS('http://www.w3.org/2000/svg',name);for(const [k,v]of Object.entries(attrs))el.setAttribute(k,v);return el;}
 function drawGizmo(){
- svg.style.opacity=pointer?.kind==='camera'?'0':'1';
+ svg.style.opacity=['camera','single'].includes(pointer?.kind)?'0':'1';
  // Keep the original DOM touch target attached until every finger lifts.
  if(contacts.size)return;
  svg.replaceChildren();const g=state.gizmo;if(!g?.center)return;
@@ -405,7 +453,9 @@ function receive(text){
  $('position-frame').textContent=selected?.parent?'Position relative to '+state.baseline.objects.find(o=>o.id===selected.parent).label+'. Arrows use world axes.':'World position · X east · Y up · Z south';
  $('position-label').textContent='Position '+units;
  if(selected){for(const [name,field]of [['position','position_m'],['rotation','rotation_degrees']])for(let i=0;i<3;i++){const input=$(name+'-'+i);if(document.activeElement!==input)input.value=+(state.values[state.selected][field][i]/(name==='position'&&units==='in'?.0254:1)).toFixed(name==='position'?4:2);if(name==='position'){input.step=units==='in'?.1:.00254;input.setAttribute('aria-label','Position '+'XYZ'[i]+' in '+(units==='in'?'inches':'meters'));}}}
- $('edit-hint').textContent=state.view_mode?'One finger: '+(state.navigation_mode==='orbit'&&selected?'orbit selection':'look')+'. Two fingers: '+state.navigation_mode+'. Pinch to zoom. Focus centers the selection.':selected?(state.mode==='move'?'Arrows move one axis; squares move two. Two fingers '+state.navigation_mode+' · pinch to zoom.':'Drag a ring to rotate. Two fingers '+state.navigation_mode+' · pinch to zoom.'):(scopeRecord?'Tap a part within '+scopeRecord.label+', or choose from the list.':'The game is paused. Tap a furnishing to select it.');
+ const one=state.navigation_mode==='orbit'?'pan':'orbit';
+ $('gesture-map').textContent=`One finger: ${one} · Two fingers: ${state.navigation_mode} · Pinch: zoom`;
+ $('edit-hint').textContent=state.view_mode?'Drag to move the camera. Focus centers the selection.':selected?(state.mode==='move'?'Tap to select. Drag the scene to navigate; arrows and squares move the object.':'Tap to select. Drag the scene to navigate; rings rotate the object.'):(scopeRecord?'Tap a part within '+scopeRecord.label+', or drag to navigate.':'Tap a furnishing to select it, or drag to navigate.');
  const n=changes().length;$('export-feedback').disabled=false;
  const status=state.error||(storageOK?(n?(pointer?.kind==='gizmo'?'Adjusting…':`${n} changed · saved on this device`):''):'Storage unavailable. Export before leaving.');if($('editor-message').textContent!==status)$('editor-message').textContent=status;
  if(state.error&&!state.active)$('edit-launch').title=state.error;
@@ -413,12 +463,12 @@ function receive(text){
  if(pointer?.kind==='gizmo'&&selected){const axis=pointer.axis;const delta=state.drag_delta;$('gesture-readout').textContent=selected.label+' · '+(state.mode==='move'?(pointer.plane!=null?state.drag_components.map((v,i)=>i===pointer.plane?null:'XYZ'[i]+' '+(v/.0254).toFixed(2)+'″').filter(Boolean).join(' · '):(delta/.0254).toFixed(2)+'″'):delta.toFixed(1)+'°');}
  drawGizmo();window.dispatchEvent(new Event('apartment-editor-state'));
 }
-window.apartmentEditor={getCanvasHeight(){return canvas.getBoundingClientRect().height;},connectGame(fn){callback=fn;},disconnectGame(){clearGesture(false);callback=null;$('layout-tools').hidden=true;document.body.classList.remove('layout-editing');hadInitial=false;objectsReady=false;},receive,getState(){return state;},requestState(){send({action:'state'});}};
+window.apartmentEditor={getCanvasHeight(){return canvas.getBoundingClientRect().height;},connectGame(fn){callback=fn;applyPreferences();},disconnectGame(){clearGesture(false);callback=null;$('layout-tools').hidden=true;document.body.classList.remove('layout-editing');hadInitial=false;objectsReady=false;},receive,getState(){return state;},requestState(){send({action:'state'});}};
 $('layout-tools').addEventListener('pointerdown',e=>{if(!e.target.closest('svg'))clearGesture();},true);
 $('edit-launch').onclick=()=>send({action:'open'});
 $('edit-done').onclick=()=>{clearGesture();send({action:'close'});canvas.focus({preventScroll:true});};
 $('move-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'move'});};$('rotate-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'rotate'});};
- for(const mode of ['pan','orbit'])$('camera-'+mode).onclick=()=>{clearGesture();send({action:'navigation_mode',mode});};
+ for(const mode of ['pan','orbit'])$('camera-'+mode).onclick=()=>{clearGesture();preferences.update({twoFingerDrag:mode});applyPreferences();};
  for(const [id,scale]of [['zoom-in',1.2],['zoom-out',1/1.2]])$(id).onclick=()=>{clearGesture();send({action:'navigation_start'});send({action:'navigation',scale});send({action:'navigation_end'});};
  $('view-noclip').onclick=()=>{clearGesture();send({action:'camera_noclip',value:!state.camera_noclip});};
  $('view-mode').onclick=()=>send({action:'view_mode',value:!state.view_mode});$('view-reset').onclick=()=>send({action:'view_reset'});
@@ -429,8 +479,9 @@ $('move-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:
  $('objects-toggle').onclick=()=>{const visible=$('objects-panel').hidden;$('objects-panel').hidden=!visible;$('objects-toggle').setAttribute('aria-expanded',visible);};
  $('object-list').onchange=e=>{if(e.target.value)send({action:'select',id:e.target.value});};
  document.querySelectorAll('[data-view]').forEach(el=>el.onclick=()=>{const [x,y,z]=el.dataset.view.split(',').map(Number);send({action:'view_step',x,y,z});});
- $('units').onchange=e=>{units=e.target.value;send({action:'state'});};
- $('snap-size').onchange=e=>send({action:'snap',move:+e.target.value,rotate:+e.target.value===.0254?15:+e.target.value===0?0:1});
+ $('units').onchange=e=>{preferences.update({units:e.target.value});applyPreferences();};
+ $('snap-size').onchange=e=>{preferences.update({snapMove:+e.target.value});applyPreferences();};
+ $('reset-preferences').onclick=()=>{clearGesture();preferences.reset();applyPreferences();};
  for(const [id,sign]of [['nudge-minus',-1],['nudge-plus',1]])$(id).onclick=()=>send({action:'nudge',axis:+$('nudge-axis').value,amount:sign*(state.mode==='move'?(state.snap_move||.00254):(state.snap_rotate||1)*Math.PI/180)});
 $('editor-undo').onclick=()=>send({action:'undo'});$('editor-redo').onclick=()=>send({action:'redo'});$('reset-object').onclick=()=>send({action:'reset'});
 for(const name of ['position','rotation'])for(let i=0;i<3;i++)$(name+'-'+i).onchange=e=>{const value=Number(e.target.value);if(!Number.isFinite(value)||e.target.value===''){e.target.blur();send({action:'state'});return;}const transform=structuredClone(state.values[state.selected]);transform[name==='position'?'position_m':'rotation_degrees'][i]=value*(name==='position'&&units==='in'?.0254:1);e.target.blur();send({action:'transform',value:transform});};
@@ -449,7 +500,7 @@ const point=e=>{const r=canvas.getBoundingClientRect();return [(e.clientX-r.left
 function clearGesture(notify=true){
  const old=pointer;pointer=null;contacts.clear();
  if(notify&&old?.kind==='gizmo')send({action:'drag_cancel'});
- if(notify&&['camera','orbit'].includes(old?.kind))send({action:'navigation_cancel'});
+ if(notify&&['camera','single'].includes(old?.kind))send({action:'navigation_cancel'});
 }
 function pair(ids){const a=contacts.get(ids[0]),b=contacts.get(ids[1]);return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,distance:Math.max(12,Math.hypot(a.x-b.x,a.y-b.y))};}
 function startContact(id,e,target){
@@ -457,15 +508,14 @@ function startContact(id,e,target){
  contacts.set(id,{x:e.clientX,y:e.clientY});
  if(contacts.size===1){
   const handle=target.closest?.('[data-axis],[data-plane]');
-  pointer={id,x:e.clientX,y:e.clientY,kind:handle?'gizmo':state.view_mode?(state.navigation_mode==='orbit'&&state.selected?'orbit':'view'):'pick'};
-  if(pointer.kind==='orbit')send({action:'navigation_start'});
+  pointer={id,x:e.clientX,y:e.clientY,kind:handle?'gizmo':'pick',selectOnTap:!state.view_mode,mode:state.navigation_mode==='orbit'?'pan':'orbit'};
   if(handle){
    if(handle.dataset.plane!=null)pointer.plane=+handle.dataset.plane;else pointer.axis=+handle.dataset.axis;
    send({action:'drag_start',axis:pointer.axis??-1,plane:pointer.plane??-1,point:point(e)});
   }
  }else if(contacts.size===2&&pointer?.kind!=='blocked'){
   if(pointer?.kind==='gizmo')send({action:'drag_cancel'});
-  if(pointer?.kind==='orbit')send({action:'navigation_end'});
+  if(pointer?.kind==='single')send({action:'navigation_end'});
   const ids=[...contacts.keys()];pointer={kind:'camera',ids,start:pair(ids),mode:state.navigation_mode};
   send({action:'navigation_start'});
  }
@@ -477,8 +527,10 @@ function updateGesture(id,e){
   send({action:'navigation',mode:pointer.mode,x:(now.x-pointer.start.x)/r.width,y:(now.y-pointer.start.y)/r.height,scale:now.distance/pointer.start.distance});
  }else if(pointer.id===id){
   if(pointer.kind==='gizmo')send({action:'drag',point:point(e)});
-  else if(pointer.kind==='orbit')send({action:'navigation',mode:'orbit',x:(e.clientX-pointer.x)/canvas.clientWidth,y:(e.clientY-pointer.y)/canvas.clientHeight});
-  else if(pointer.kind==='view'){send({action:'view_look',x:(e.clientX-pointer.x)/canvas.clientWidth,y:(e.clientY-pointer.y)/canvas.clientHeight});pointer.x=e.clientX;pointer.y=e.clientY;}
+  else {
+   if(pointer.kind==='pick'&&Math.hypot(e.clientX-pointer.x,e.clientY-pointer.y)>=8){pointer.kind='single';send({action:'navigation_start'});}
+   if(pointer.kind==='single')send({action:'navigation',mode:pointer.mode,x:(e.clientX-pointer.x)/canvas.clientWidth,y:(e.clientY-pointer.y)/canvas.clientHeight});
+  }
  }
 }
 function endContact(id,e,cancel=false){
@@ -489,9 +541,9 @@ function endContact(id,e,cancel=false){
   send({action:cancel?'navigation_cancel':'navigation_end'});
  }else if(last?.id===id){
   pointer=contacts.size?{kind:'blocked'}:null;
-  if(last.kind==='orbit')send({action:cancel?'navigation_cancel':'navigation_end'});
+  if(last.kind==='single')send({action:cancel?'navigation_cancel':'navigation_end'});
   if(last.kind==='gizmo')send({action:cancel?'drag_cancel':'drag_end'});
-  else if(last.kind==='pick'&&!cancel&&Math.hypot(e.clientX-last.x,e.clientY-last.y)<12)send({action:'pick',point:point(e)});
+  else if(last.kind==='pick'&&last.selectOnTap&&!cancel&&Math.hypot(e.clientX-last.x,e.clientY-last.y)<8)send({action:'pick',point:point(e)});
  }
  if(!contacts.size){pointer=null;send({action:'state'});}
 }
