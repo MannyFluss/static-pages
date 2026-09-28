@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-f491d5477f95.pck":328364},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-f491d5477f95.pck"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm":39514754,"game-ec1f3b29a99c.pck":331948},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"mainPack":"game-ec1f3b29a99c.pck"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -222,6 +222,7 @@ const engine = new Engine(GODOT_CONFIG);
 #play-touch button:active,#play-touch button[data-held=true]{background:#0066cc;color:white}#play-touch button:focus-visible{outline:3px solid #0066cc;outline-offset:2px}
 #touch-scene{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom))}
 #touch-jump{position:absolute;right:max(24px,env(safe-area-inset-right));bottom:max(88px,calc(env(safe-area-inset-bottom) + 64px));border-radius:50%!important;width:72px;height:72px}
+#touch-fly{position:absolute;right:max(24px,env(safe-area-inset-right));bottom:max(88px,calc(env(safe-area-inset-bottom) + 64px));display:flex;gap:8px}#touch-fly button{min-width:72px;min-height:64px}
 #touch-pad{position:absolute;left:22px;bottom:max(48px,calc(env(safe-area-inset-bottom) + 30px));width:124px;height:124px;border:2px solid #fff9;border-radius:50%;background:#fff1;box-sizing:border-box}
 #touch-thumb{position:absolute;left:39px;top:39px;width:42px;height:42px;border-radius:50%;background:#fff7}
 #touch-help{position:absolute;left:max(20px,env(safe-area-inset-left));bottom:max(182px,calc(env(safe-area-inset-bottom) + 164px));padding:4px 8px;border-radius:6px;color:#fff;background:#342a1c99;font-size:14px;max-width:65%}
@@ -233,6 +234,7 @@ body.layout-editing #play-touch{display:none!important}
 <div id="touch-help">Left: move · Right: look</div>
 <div id="touch-bar"><button id="touch-steer" aria-label="Movement mode: strafe. Tap for one-finger steering.">Strafe</button><button id="touch-reset">Reset</button><button id="touch-pause">Pause</button></div>
 <button id="touch-scene" hidden>Portal study</button>
+<div id="touch-fly" hidden><button id="touch-up" data-flight="1" aria-label="Fly up">Up</button><button id="touch-down" data-flight="-1" aria-label="Fly down">Down</button></div>
 <button id="touch-jump" aria-label="Jump">Jump</button>
 </div>
 <script>
@@ -248,8 +250,8 @@ function send(command){if(callback)callback(JSON.stringify(command));}
 function local(e){const r=surface.getBoundingClientRect();return {point:[e.clientX-r.left,e.clientY-r.top],width:r.width};}
 function release(el,id){try{if(el.hasPointerCapture(id))el.releasePointerCapture(id);}catch{counts.captureErrors++;}}
 function clear(notify=true,reason='game-state'){lastClear=reason;const active=[...contacts.keys()],buttons=[...held.entries()];contacts.clear();held.clear();if(!nativeTouch)for(const id of active)release(surface,id);for(const [id,el]of buttons){el.dataset.held='false';release(el,id);}pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';if(notify)send({action:'clear'});}
-function receive(text){state=JSON.parse(text);root.hidden=state.blocked;$('touch-scene').hidden=!state.has_modes;$('touch-scene').textContent=state.portal?'Building':'Portal study';if(state.blocked||state.paused)clear(false);$('touch-pause').textContent=state.paused?'Resume':'Pause';$('touch-steer').textContent=state.steer?'Steer':'Strafe';$('touch-steer').setAttribute('aria-label',state.steer?'Movement mode: steer. Tap for strafe.':'Movement mode: strafe. Tap for one-finger steering.');$('touch-help').textContent=state.paused?'Paused · tap Resume':state.steer?'Left: walk + turn · Right: look':'Left: move · Right: look';const move=[...contacts.values()].find(p=>p.gameId===state.move_id);if(move){pad.style.left=(move.start[0]-62)+'px';pad.style.top=(move.start[1]-62)+'px';pad.style.bottom='auto';thumb.style.transform=`translate(${state.movement[0]*62}px,${state.movement[1]*62}px)`;}else{pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';}}
-function report(){return {schema:'apartment-input-report/v1',revision:'f491d5477f9570e8ef3990b7bb32feecae7f8218',browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints,inputPath:nativeTouch?'touch-events':'pointer-events',viewport:[innerWidth,innerHeight],visible:!document.hidden,documentFocused:document.hasFocus(),activeElement:document.activeElement?.id||document.activeElement?.tagName,connected:!!callback,state,counts:{...counts},lastClear,lastStart,lastMove};}
+function receive(text){state=JSON.parse(text);$('touch-fly').hidden=!state.noclip;$('touch-jump').hidden=!!state.noclip;root.hidden=state.blocked;$('touch-scene').hidden=!state.has_modes;$('touch-scene').textContent=state.portal?'Building':'Portal study';if(state.blocked||state.paused)clear(false);$('touch-pause').textContent=state.paused?'Resume':'Pause';$('touch-steer').textContent=state.steer?'Steer':'Strafe';$('touch-steer').setAttribute('aria-label',state.steer?'Movement mode: steer. Tap for strafe.':'Movement mode: strafe. Tap for one-finger steering.');$('touch-help').textContent=state.paused?'Paused · tap Resume':state.noclip?'Noclip · move to fly · hold Up / Down':state.steer?'Left: walk + turn · Right: look':'Left: move · Right: look';const move=[...contacts.values()].find(p=>p.gameId===state.move_id);if(move){pad.style.left=(move.start[0]-62)+'px';pad.style.top=(move.start[1]-62)+'px';pad.style.bottom='auto';thumb.style.transform=`translate(${state.movement[0]*62}px,${state.movement[1]*62}px)`;}else{pad.style.left='';pad.style.top='';pad.style.bottom='';thumb.style.transform='';}}
+function report(){return {schema:'apartment-input-report/v1',revision:'ec1f3b29a99cc1c56fe31ae9f245aae160ffc227',browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints,inputPath:nativeTouch?'touch-events':'pointer-events',viewport:[innerWidth,innerHeight],visible:!document.hidden,documentFocused:document.hasFocus(),activeElement:document.activeElement?.id||document.activeElement?.tagName,connected:!!callback,state,counts:{...counts},lastClear,lastStart,lastMove};}
 window.apartmentTouch={connectGame(fn){callback=fn;send({action:'state'});},disconnectGame(){clear(false,'disconnect');callback=null;state=null;root.hidden=true;},receive,getState(){return state;},getReport:report,requestState(){send({action:'state'});}};
 // Browser IDs may be negative, including -1. Keep them only as opaque Map keys;
 // Godot reserves -1 for "no contact", so allocate separate nonnegative slot IDs.
@@ -268,7 +270,7 @@ if(nativeTouch){
  for(const name of ['pointerup','pointercancel'])window.addEventListener(name,e=>{end(e.pointerId,name==='pointercancel');release(surface,e.pointerId);});
  surface.addEventListener('lostpointercapture',e=>end(e.pointerId,true));
 }
-for(const [id,action]of [['touch-jump','jump'],['touch-steer','steer'],['touch-reset','reset'],['touch-pause','pause'],['touch-scene','mode']]){const button=$(id);button.addEventListener('pointerdown',e=>{if(e.button>0||!callback||state?.blocked)return;e.preventDefault();try{button.setPointerCapture(e.pointerId);}catch{counts.captureErrors++;}held.set(e.pointerId,button);button.dataset.held='true';$('canvas').focus({preventScroll:true});send({action});});function up(e){if(held.get(e.pointerId)!==button)return;held.delete(e.pointerId);button.dataset.held='false';release(button,e.pointerId);}for(const event of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(event,up);button.addEventListener('click',e=>{if(e.detail===0){$('canvas').focus({preventScroll:true});send({action});}});}
+for(const [id,action]of [['touch-up','fly'],['touch-down','fly'],['touch-jump','jump'],['touch-steer','steer'],['touch-reset','reset'],['touch-pause','pause'],['touch-scene','mode']]){const button=$(id);button.addEventListener('pointerdown',e=>{if(e.button>0||!callback||state?.blocked)return;e.preventDefault();try{button.setPointerCapture(e.pointerId);}catch{counts.captureErrors++;}held.set(e.pointerId,button);button.dataset.held='true';$('canvas').focus({preventScroll:true});send(action==='fly'?{action,value:Math.max(-1,Math.min(1,[...held.values()].reduce((n,b)=>n+Number(b.dataset.flight||0),0)))}:{action});});function up(e){if(held.get(e.pointerId)!==button)return;held.delete(e.pointerId);button.dataset.held='false';release(button,e.pointerId);if(action==='fly')send({action,value:Math.max(-1,Math.min(1,[...held.values()].reduce((n,b)=>n+Number(b.dataset.flight||0),0)))});}for(const event of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(event,up);button.addEventListener('click',e=>{if(e.detail===0){$('canvas').focus({preventScroll:true});send({action});}});}
 window.addEventListener('blur',()=>clear(true,'window-blur'));window.addEventListener('pagehide',()=>clear(true,'page-hide'));window.addEventListener('resize',()=>clear(true,'window-resize'));document.addEventListener('visibilitychange',()=>{if(document.hidden)clear(true,'document-hidden');});window.visualViewport?.addEventListener('resize',()=>clear(true,'visual-viewport-resize'));
 window.addEventListener('apartment-editor-state',()=>{if(window.apartmentEditor?.getState()?.active)clear(true,'editor');});
 })();
@@ -311,7 +313,7 @@ body.layout-editing>a{display:none!important}
 <div id="parts-panel" hidden><div class="control-row"><label for="parts-list" id="parts-label">Parts</label><button id="scope-root">Whole room</button></div><select id="parts-list" aria-label="Select a part" style="width:100%"></select></div>
 <div id="objects-panel" hidden><label for="object-list">Select an object or group</label><select id="object-list"><option value="">Choose an object…</option></select></div>
 <div class="control-row" id="camera-gestures" aria-label="Two-finger drag"><span>Two fingers</span><button id="camera-pan" aria-pressed="true">Pan</button><button id="camera-orbit" aria-pressed="false">Orbit</button></div>
-<div id="view-controls" hidden><div class="control-row"><button data-view="0,0,-0.3">Forward</button><button data-view="0,0,0.3">Back</button><button id="view-reset">Player view</button></div><div class="control-row"><button id="zoom-in">Zoom in</button><button id="zoom-out">Zoom out</button></div><div class="control-row"><button data-view="-0.3,0,0">Left</button><button data-view="0.3,0,0">Right</button><button data-view="0,0.3,0">Up</button><button data-view="0,-0.3,0">Down</button></div></div>
+<div id="view-controls" hidden><div class="control-row"><button data-view="0,0,-0.3">Forward</button><button data-view="0,0,0.3">Back</button><button id="view-reset">Player view</button></div><div class="control-row"><button id="zoom-in">Zoom in</button><button id="zoom-out">Zoom out</button><button id="view-noclip" aria-pressed="false">Noclip: Off</button></div><div class="control-row"><button data-view="-0.3,0,0">Left</button><button data-view="0.3,0,0">Right</button><button data-view="0,0.3,0">Up</button><button data-view="0,-0.3,0">Down</button></div></div>
 <details id="precision" hidden><summary>Precision</summary>
 <div id="precision-options" class="control-row"><label>Units <select id="units"><option value="in">Inches</option><option value="m">Meters</option></select></label><label>Snap <select id="snap-size"><option value="0.00254">0.1″ / 1°</option><option value="0.003175">⅛″ / 1°</option><option value="0.0254">1″ / 15°</option><option value="0">Off</option></select></label></div>
 <div id="position-frame"></div>
@@ -327,7 +329,7 @@ body.layout-editing>a{display:none!important}
 const $=id=>document.getElementById(id), canvas=$('canvas'), svg=$('gizmo'), dialog=$('feedback-dialog');
 let callback=null,state=null,hadInitial=false,draft=null,pointer=null,storageOK=true,units='in',objectsReady=false,draftDirty=false,partsScope=null;
 const contacts=new Map(),nativeTouch='ontouchstart' in window;
-const revision='f491d5477f9570e8ef3990b7bb32feecae7f8218', colors=['#ff6b70','#82db8f','#78a8ff'];
+const revision='ec1f3b29a99cc1c56fe31ae9f245aae160ffc227', colors=['#ff6b70','#82db8f','#78a8ff'];
 const clean=t=>({position_m:t.position_m.map(n=>+n.toFixed(7)),rotation_degrees:t.rotation_degrees.map(n=>+n.toFixed(5))});
 const differs=(a,b)=>a.position_m.some((n,i)=>Math.abs(n-b.position_m[i])>0.00001)||a.rotation_degrees.some((n,i)=>Math.abs(n-b.rotation_degrees[i])>0.0001);
 function changes(){return state.baseline.objects.filter(o=>differs(o,state.values[o.id])).map(o=>({id:o.id,label:(o.parent?state.baseline.objects.find(p=>p.id===o.parent).label+' › ':'')+o.label,before:clean(o),after:clean(state.values[o.id])}));}
@@ -386,6 +388,7 @@ function receive(text){
  $('editor-undo').disabled=!state.can_undo;$('editor-redo').disabled=!state.can_redo;
  $('editor-undo').setAttribute('aria-label','Undo '+state.undo_label);$('editor-undo').title='Undo '+state.undo_label;$('editor-redo').setAttribute('aria-label','Redo '+state.redo_label);
  for(const mode of ['pan','orbit'])$('camera-'+mode).setAttribute('aria-pressed',state.navigation_mode===mode);
+ $('view-noclip').textContent='Noclip: '+(state.camera_noclip?'On':'Off');$('view-noclip').setAttribute('aria-pressed',state.camera_noclip);
  $('view-mode').setAttribute('aria-pressed',state.view_mode);$('view-controls').hidden=!state.view_mode;
  if(!objectsReady){for(const o of state.baseline.objects){const option=document.createElement('option');option.value=o.id;option.textContent=(o.parent?state.baseline.objects.find(p=>p.id===o.parent)?.label+' › ':'')+o.label+(o.group?' (group)':'');$('object-list').append(option);}objectsReady=true;}
  $('object-list').value=state.selected;
@@ -417,6 +420,7 @@ $('edit-done').onclick=()=>{clearGesture();send({action:'close'});canvas.focus({
 $('move-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'move'});};$('rotate-mode').onclick=()=>{send({action:'view_mode',value:false});send({action:'mode',mode:'rotate'});};
  for(const mode of ['pan','orbit'])$('camera-'+mode).onclick=()=>{clearGesture();send({action:'navigation_mode',mode});};
  for(const [id,scale]of [['zoom-in',1.2],['zoom-out',1/1.2]])$(id).onclick=()=>{clearGesture();send({action:'navigation_start'});send({action:'navigation',scale});send({action:'navigation_end'});};
+ $('view-noclip').onclick=()=>{clearGesture();send({action:'camera_noclip',value:!state.camera_noclip});};
  $('view-mode').onclick=()=>send({action:'view_mode',value:!state.view_mode});$('view-reset').onclick=()=>send({action:'view_reset'});
  $('focus-object').onclick=()=>send({action:'focus'});$('selection-parent').onclick=()=>send({action:'select',id:state.baseline.objects.find(o=>o.id===state.selected).parent});
  $('parts-toggle').onclick=()=>{send({action:'view_mode',value:false});send({action:'parts'});};
@@ -522,6 +526,8 @@ window.addEventListener('beforeunload',e=>{if(state&&(changes().length||$('feedb
 <h2 id="arrival-title">Cheats</h2><p id="arrival-description">The game is paused. Skip to the furnished room or try the arrivals again.</p>
 <button id="arrival-all" autofocus>Reveal all objects</button>
 <button id="arrival-restart">Restart arrivals</button>
+<button id="arrival-noclip" aria-pressed="false">Noclip: Off</button>
+<p id="noclip-help">Fly through walls. Turning noclip off returns you to a safe walking position.</p>
 <p id="arrival-count" role="status" aria-live="polite"></p>
 <details><summary>Input help</summary><p>If movement stops, return to the game and tap Resume. If that fails, copy an input report for Codex.</p><button id="input-report">Copy input report</button><p id="input-report-status" role="status"></p><textarea id="input-report-text" readonly hidden aria-label="Input report to copy" style="box-sizing:border-box;width:100%;min-height:120px"></textarea></details>
 <button id="arrival-close">Back to game</button>
@@ -530,9 +536,10 @@ window.addEventListener('beforeunload',e=>{if(state&&(changes().length||$('feedb
 (()=>{
 const launch=document.getElementById('arrival-launch'),dialog=document.getElementById('arrival-dialog'),count=document.getElementById('arrival-count');let callback=null,state=null,beforeMenuReport=null;
 const send=data=>callback?.(JSON.stringify(data));
-window.apartmentArrivals={connectGame(fn){callback=fn;},disconnectGame(){callback=null;launch.hidden=true;if(dialog.open)dialog.close();},receive(text){state=JSON.parse(text);launch.hidden=state.editor||state.portal;const next=`${state.arrived.length} of ${state.total} objects present. ${state.status}`;if(count.textContent!==next)count.textContent=next;},getState(){return state;},requestState(){send({action:'state'});}};
+window.apartmentArrivals={connectGame(fn){callback=fn;},disconnectGame(){callback=null;launch.hidden=true;if(dialog.open)dialog.close();},receive(text){state=JSON.parse(text);const noclip=document.getElementById('arrival-noclip');noclip.textContent='Noclip: '+(state.noclip?'On':'Off');noclip.setAttribute('aria-pressed',!!state.noclip);launch.hidden=state.editor||state.portal;const next=`${state.arrived.length} of ${state.total} objects present. ${state.status}`;if(count.textContent!==next)count.textContent=next;},getState(){return state;},requestState(){send({action:'state'});}};
 launch.onclick=()=>{beforeMenuReport=window.apartmentTouch?.getReport?.()||null;send({action:'menu',open:true});dialog.showModal();};
 document.getElementById('arrival-all').onclick=()=>send({action:'all'});
+document.getElementById('arrival-noclip').onclick=()=>send({action:'noclip'});
 document.getElementById('arrival-restart').onclick=()=>send({action:'restart'});
 document.getElementById('input-report').onclick=async()=>{const report=beforeMenuReport||window.apartmentTouch?.getReport?.()||{schema:'apartment-input-report/v1',connected:false,browser:navigator.userAgent,maxTouchPoints:navigator.maxTouchPoints};const text='Apartment Study controls are not working. Please diagnose this input report; it contains browser/input state before opening Cheats, not layout edits.\n\n'+JSON.stringify(report,null,2);const field=document.getElementById('input-report-text'),status=document.getElementById('input-report-status');field.value=text;field.hidden=false;try{await navigator.clipboard.writeText(text);status.textContent='Copied. Paste into Codex.';}catch{status.textContent='Select and copy the report below.';field.select();}};
 document.getElementById('arrival-close').onclick=()=>dialog.close();
