@@ -5,3 +5,5 @@ A collection of static HTML pages hosted via GitHub Pages. This repo serves as a
 ## Pages
 
 - [Font Preview](https://mannyfluss.github.io/static-pages/font-preview-full.html) — Full font preview tool
+
+- [Care & Consequence](https://mannyfluss.github.io/static-pages/care-and-consequence.html) — An interactive field guide to Jony Ive, design tradeoffs, and building an art tool
